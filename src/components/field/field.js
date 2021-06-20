@@ -1,10 +1,43 @@
-import React, { useState, useEffect } from "react";
+import {
+  createSmartappDebugger,
+  createAssistant,
+} from "@sberdevices/assistant-client";
+
+import React, { useState, useEffect, state, useRef } from "react";
 
 import "./field.css";
 import flag from "../../assets/flag.svg";
 
 import FieldCell from "../field__cell/field__cell";
 import Inputs from "../inputs/inputs";
+
+const initializeAssistant = (getState) => {
+  if (process.env.NODE_ENV === "development") {
+    return createSmartappDebugger({
+      token:
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDI1OTUyNywiaWF0IjoxNjI0MTczMTE3LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiNzcyNzM4ZTAtZTFiMC00MzkzLWI0NzUtOTA3NGMwZjBmOTU4Iiwic2lkIjoiYmEzZmRhNzktMjc4Mi00NTZmLWJlNjQtZWViNDAyN2Y1N2MzIn0.SeAa7G6WsIjleBh7eEpj0ixqUVDgYdadBrVppQ4yBAH43LPYY5RVC2LtLXBwRk9WASEnWLLE4ms3oQYhTMFEV5KWqEH7ULvChecK5xEUvlrcUY8q9Wjed6g31TAMZCSLXR3yI_JADMWCGZuCfE-AIFbJyteoLM1mYqtBS3S86CSwq0sUIoZsBYiOgR_VOckycGHPk-qlfb9SXmAXeSWAxz2vnv1p20dgJTpyg6WJTPtSarZh28N2C2AHMQ4MGHAyjgcp-6062DRBphY0CdOOjkRSTR36ziVHuNlEIev90WmYkBBS-N2A1gWIBirzWm1xvl67Q6GIgvIRCI6RUQkFAuMCfGGXsFlu9cYQ34Ebwm-9h9ZMNBfVN18YAoo7MfqWpgKj1t_Mn40Y4Sqxj2nownv_7nkuuEZdlfPfPqlaNZ_YOWWVZJFZniKYYDuYW_Hl_CFUDLqqPPC4v8PBlLwBGWpFGb8IgVS5wcD4u_wLjQJI3cCDhjJrKdyq88facw3zmbqFU6CYtmEC_MVyOfjB6NH3Q87NLHgUhOVUWTT76UFXjqjE-Sx11q_Q1w2bXY29zpei41jaUx9TY1HeDaAMr44kGjDBFe87eMPVrnBYsyLCGSY1lr9FfusUTDY-gL_UqU26OOvhduiUGUeYIpv5LcYSiZknvJwBWI05af_BEBE" ??
+        "",
+      initPhrase: `Запусти Сапёр`,
+      getState,
+    });
+  }
+  return createAssistant({ getState });
+}
+
+const getStateForAssistant = () => {
+  console.log("getStateForAssistant: this.state:", state);
+  const state_ = {
+    itemselector: {
+      items: state.notes.map(({ id, title }, index) => ({
+        number: index + 1,
+        id,
+        title,
+      })),
+    },
+  };
+  console.log("getStateForAssistant: state:", state);
+  return state;
+};
 
 const Field = ({
   difficulty,
@@ -19,8 +52,50 @@ const Field = ({
 
   // independent functions
 
+  var assistant = useRef()
+
+  useEffect(() => {
+    assistant.current = initializeAssistant(() => getStateForAssistant());
+    assistant.current.on("start", (event) => {
+      console.log(`assistant.on(start)`, event);
+    });
+  
+    assistant.current.on(
+      "data",
+      (event) => {
+        const { action } = event;
+        dispatchAssistantAction(action);
+      },[]);
+  }, []);
+
+  const dispatchAssistantAction = async (action, coord_str) => {
+    console.log("dispatchAssistantAction", action);
+    if (action) { 
+      while(action.type){
+        if(action.type === "open_field"){        
+          if(status === "not_started"){
+            console.log("0")
+            const x_raw = action.note.charAt(0).toUpperCase();
+            const y_raw = Number(action.note.substr(1));
+            const pos = strToCoordinateObj(y_raw, x_raw); 
+            newGame(pos);
+            break; 
+            }else if (status === "started"){
+              console.log("1")
+              return openCellWithStr(action.note)
+            }
+        }else if(action.type === "new_game"){
+          return restartGame();
+        }else if(action.type === "notice_field"){
+          //return toggleFlagWithStr(action.note);
+          //return toggleFlag(8, 8);
+        }
+      }
+    }
+  };
+
   const calculateFieldData = (difficulty) => {
-    switch (difficulty) {
+    switch (difficulty) { 
       case "amateur":
         return {
           x: 15,
@@ -155,16 +230,20 @@ const Field = ({
     }
   };
 
-  const toggleFlag = (e, y, x) => {
+  const toggleFlag = (e, y = "Err", x = "Err") => {
     e.preventDefault();
-    if (openedCellsMatrix[y][x] !== 1 && status === "started") {
-      const temp_opened_cells_matrix = openedCellsMatrix;
-      temp_opened_cells_matrix[y][x] =
-        temp_opened_cells_matrix[y][x] === -1 ? 0 : -1;
-      setFlagsCount(
-        flagsCount + (temp_opened_cells_matrix[y][x] === -1 ? -1 : 1)
-      );
-      setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+    if (y in openedCellsMatrix) {
+      if (x in openedCellsMatrix[y]) {
+        if (openedCellsMatrix[y][x] !== 1 && status === "started") {
+          const temp_opened_cells_matrix = openedCellsMatrix;
+          temp_opened_cells_matrix[y][x] =
+            temp_opened_cells_matrix[y][x] === -1 ? 0 : -1;
+          setFlagsCount(
+            flagsCount + (temp_opened_cells_matrix[y][x] === -1 ? -1 : 1)
+          );
+          setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+        }
+      }
     }
   };
 
@@ -237,6 +316,9 @@ const Field = ({
   };
 
   const newGame = (opened) => {
+    setTimeout(() => {
+      console.log(status)
+    }, 500)
     if (status === "not_started") {
       setFieldMatrix(
         generateFieldMatrix(fieldData, generateMines(fieldData, opened))

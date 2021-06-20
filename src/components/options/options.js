@@ -8,23 +8,20 @@ const Options = ({
 }) => {
   return (
     <div className="options">
-      <button className="options__restart" onClick={restartGame}>
-        Новая игра
-      </button>
-      <select
+      {/* <select
         className="options__difficulty"
         defaultValue="beginner"
         onChange={(e) => changeDifficulty(e.currentTarget.value)}
       >
-        <option value="beginner">Новичок</option>
-        <option value="amateur">Любитель</option>
+        <option value="beginner">Простой</option>
+        <option value="amateur">Средний</option>
         <option
           value="profi"
           className="options__difficulty-option options__difficulty-option_profi"
         >
-          Профи
+          Сложный
         </option>
-      </select>
+      </select> */}
     </div>
   );
 };
