@@ -1,9 +1,9 @@
-import {
-  createSmartappDebugger,
-  createAssistant,
-} from "@sberdevices/assistant-client";
+// import {
+//   createSmartappDebugger,
+//   createAssistant,
+// } from "@sberdevices/assistant-client";
 
-import React, { useState, useEffect, state, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./field.css";
 import flag from "../../assets/flag.svg";
@@ -11,33 +11,33 @@ import flag from "../../assets/flag.svg";
 import FieldCell from "../field__cell/field__cell";
 import Inputs from "../inputs/inputs";
 
-const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === "production") {
-    return createSmartappDebugger({
-      token:
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDI1OTUyNywiaWF0IjoxNjI0MTczMTE3LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiNzcyNzM4ZTAtZTFiMC00MzkzLWI0NzUtOTA3NGMwZjBmOTU4Iiwic2lkIjoiYmEzZmRhNzktMjc4Mi00NTZmLWJlNjQtZWViNDAyN2Y1N2MzIn0.SeAa7G6WsIjleBh7eEpj0ixqUVDgYdadBrVppQ4yBAH43LPYY5RVC2LtLXBwRk9WASEnWLLE4ms3oQYhTMFEV5KWqEH7ULvChecK5xEUvlrcUY8q9Wjed6g31TAMZCSLXR3yI_JADMWCGZuCfE-AIFbJyteoLM1mYqtBS3S86CSwq0sUIoZsBYiOgR_VOckycGHPk-qlfb9SXmAXeSWAxz2vnv1p20dgJTpyg6WJTPtSarZh28N2C2AHMQ4MGHAyjgcp-6062DRBphY0CdOOjkRSTR36ziVHuNlEIev90WmYkBBS-N2A1gWIBirzWm1xvl67Q6GIgvIRCI6RUQkFAuMCfGGXsFlu9cYQ34Ebwm-9h9ZMNBfVN18YAoo7MfqWpgKj1t_Mn40Y4Sqxj2nownv_7nkuuEZdlfPfPqlaNZ_YOWWVZJFZniKYYDuYW_Hl_CFUDLqqPPC4v8PBlLwBGWpFGb8IgVS5wcD4u_wLjQJI3cCDhjJrKdyq88facw3zmbqFU6CYtmEC_MVyOfjB6NH3Q87NLHgUhOVUWTT76UFXjqjE-Sx11q_Q1w2bXY29zpei41jaUx9TY1HeDaAMr44kGjDBFe87eMPVrnBYsyLCGSY1lr9FfusUTDY-gL_UqU26OOvhduiUGUeYIpv5LcYSiZknvJwBWI05af_BEBE" ??
-        "",
-      initPhrase: `Запусти Сапёр`,
-      getState,
-    });
-  }
-  return createAssistant({ getState });
-}
+// const initializeAssistant = (getState) => {
+//   if (process.env.NODE_ENV === "development") {
+//     return createSmartappDebugger({
+//       token:
+//         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDUyMTYyMiwiaWF0IjoxNjI0NDM1MjEyLCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiMTRiNjdhZjItMTU4Mi00ODIwLTllZWUtYjhhNGM2ODdiMGEwIiwic2lkIjoiY2FhMWI1MDMtOGNhMi00MTc4LTk2OTItNjI3OTRhNTQ5Yzc0In0.ir2wNAO6Joxzhg6OGjbZzyEGH4N68e-Ekjl1jOgwt-o6buXB8JjmwZCS0dSmQbEpCTI0dwvrX_1CCmE1qi-t-UPbIp_6CsreUuB0X6PHc1vwaW42GyNFEjEYmMa0Tnvgjw8RKDP9cn-JVY6EwvT8y685AU8m6F8s9OfOb5c24EPSMJe9z7RqI5XtwIBUqlp0Q7DWljfMc_fIZvUnIDepcy0QZmEv5ZDCzv8sVJ3KX5h7tN4zo2VdykFpiZvdhiK_Wq79AF4zab2YyYln-Y2n_-tMOLz9VQ1evzDRUxy4jULpDr-lBrlTDz6cGuu8MPMAy_0Na8XycHiKprkTwJaVr39DNS6y5lcHvvTAgjhDjCwUC7W665xnwhipyRCAQghw8yJnrGNgBQGiiyeNgITbOM3W1YvGo7fP_P2YwasZ8q2Gp9C4tfHhaU3WkEz0emf4ocVWE9-B_lDiINt8r44AcJUGQEIaWVLmFMmhQk193sie3ydlIz-9uK1HeHq6JtJwu7J1FpzvGi9dnT-uK9QHBCaHHxU62ykTPSVRwSjkCU6O2LjTz_s7m8UDlfQkbASpLwxk_txbx0Bc08BTF0s-LuF5rRNAu0uIhAC6h2QkE_Dt0ypPlpj-jBg9Hp89jHL63Klpe4xtiqaH_JDvrOslQ1WFe96HhQXXkcyfTa-74EM" ??
+//         "",
+//       initPhrase: `Запусти Сапёр`,
+//       getState,
+//     });
+//   }
+//   return createAssistant({ getState });
+// }
 
-const getStateForAssistant = () => {
-  console.log("getStateForAssistant: this.state:", state);
-  const state_ = {
-    itemselector: {
-      items: state.notes.map(({ id, title }, index) => ({
-        number: index + 1,
-        id,
-        title,
-      })),
-    },
-  };
-  console.log("getStateForAssistant: state:", state);
-  return state;
-};
+// const getStateForAssistant = () => {
+//   console.log("getStateForAssistant: this.state:", state);
+//   const state_ = {
+//     itemselector: {
+//       items: state.notes.map(({ id, title }, index) => ({
+//         number: index + 1,
+//         id,
+//         title,
+//       })),
+//     },
+//   };
+//   console.log("getStateForAssistant: state:", state);
+//   return state;
+// };
 
 const Field = ({
   difficulty,
@@ -52,47 +52,46 @@ const Field = ({
 
   // independent functions
 
-  var assistant = useRef()
+  // var assistant = useRef()
 
-  useEffect(() => {
-    assistant.current = initializeAssistant(() => getStateForAssistant());
-    assistant.current.on("start", (event) => {
-      console.log(`assistant.on(start)`, event);
-    });
+  // useEffect(() => {
+  //   assistant.current = initializeAssistant(() => getStateForAssistant());
+  //   assistant.current.on("start", (event) => {
+  //     console.log(`assistant.on(start)`, event);
+  //   });
   
-    assistant.current.on(
-      "data",
-      (event) => {
-        const { action } = event;
-        dispatchAssistantAction(action);
-      },[]);
-  }, []);
+  //   assistant.current.on(
+  //     "data",
+  //     (event) => {
+  //       const { action } = event;
+  //       dispatchAssistantAction(action);
+  //     },[]);
+  // }, []);
 
-  const dispatchAssistantAction = async (action, coord_str) => {
-    console.log("dispatchAssistantAction", action);
-    if (action) { 
-      while(action.type){
-        if(action.type === "open_field"){        
-          if(status === "not_started"){
-            console.log("0")
-            const x_raw = action.note.charAt(0).toUpperCase();
-            const y_raw = Number(action.note.substr(1));
-            const pos = strToCoordinateObj(y_raw, x_raw); 
-            newGame(pos);
-            break; 
-            }else if (status === "started"){
-              console.log("1")
-              return openCellWithStr(action.note)
-            }
-        }else if(action.type === "new_game"){
-          return restartGame();
-        }else if(action.type === "notice_field"){
-          //return toggleFlagWithStr(action.note);
-          //return toggleFlag(8, 8);
-        }
-      }
-    }
-  };
+  // const dispatchAssistantAction = async (action, coord_str) => {
+  //   console.log("dispatchAssistantAction", action);
+  //   if (action) { 
+  //     while(action.type){
+  //       console.log(1)
+  //       if(action.type === "new_game"){
+  //         console.log("1")
+  //       }
+
+  //       // if(action.type === "open_field"){
+  //       //   if(status === "not_started"){
+  //       //     console.log("0")
+  //       //     const x_raw = action.note.charAt(0).toUpperCase();
+  //       //     const y_raw = Number(action.note.substr(1));
+  //       //     const pos = strToCoordinateObj(y_raw, x_raw); 
+  //       //     return newGame(pos);
+  //       //   }else if (status === "started"){
+  //       //     console.log("1")
+  //       //     return openCellWithStr(action.note)
+  //       //   }
+  //       // }
+  //     }
+  //   }
+  // };
 
   const calculateFieldData = (difficulty) => {
     switch (difficulty) { 

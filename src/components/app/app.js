@@ -1,82 +1,71 @@
-// import {
-//   createSmartappDebugger,
-//   createAssistant,
-// } from "@sberdevices/assistant-client";
+import {
+  createSmartappDebugger,
+  createAssistant,
+} from "@sberdevices/assistant-client";
 
-import React, { useState, state, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Field from "../field/field";
 import Options from "../options/options";
 
-// const initializeAssistant = (getState) => {
-//   if (process.env.NODE_ENV === "development") {
-//     return createSmartappDebugger({
-//       token:
-//         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDI1OTUyNywiaWF0IjoxNjI0MTczMTE3LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiNzcyNzM4ZTAtZTFiMC00MzkzLWI0NzUtOTA3NGMwZjBmOTU4Iiwic2lkIjoiYmEzZmRhNzktMjc4Mi00NTZmLWJlNjQtZWViNDAyN2Y1N2MzIn0.SeAa7G6WsIjleBh7eEpj0ixqUVDgYdadBrVppQ4yBAH43LPYY5RVC2LtLXBwRk9WASEnWLLE4ms3oQYhTMFEV5KWqEH7ULvChecK5xEUvlrcUY8q9Wjed6g31TAMZCSLXR3yI_JADMWCGZuCfE-AIFbJyteoLM1mYqtBS3S86CSwq0sUIoZsBYiOgR_VOckycGHPk-qlfb9SXmAXeSWAxz2vnv1p20dgJTpyg6WJTPtSarZh28N2C2AHMQ4MGHAyjgcp-6062DRBphY0CdOOjkRSTR36ziVHuNlEIev90WmYkBBS-N2A1gWIBirzWm1xvl67Q6GIgvIRCI6RUQkFAuMCfGGXsFlu9cYQ34Ebwm-9h9ZMNBfVN18YAoo7MfqWpgKj1t_Mn40Y4Sqxj2nownv_7nkuuEZdlfPfPqlaNZ_YOWWVZJFZniKYYDuYW_Hl_CFUDLqqPPC4v8PBlLwBGWpFGb8IgVS5wcD4u_wLjQJI3cCDhjJrKdyq88facw3zmbqFU6CYtmEC_MVyOfjB6NH3Q87NLHgUhOVUWTT76UFXjqjE-Sx11q_Q1w2bXY29zpei41jaUx9TY1HeDaAMr44kGjDBFe87eMPVrnBYsyLCGSY1lr9FfusUTDY-gL_UqU26OOvhduiUGUeYIpv5LcYSiZknvJwBWI05af_BEBE" ??
-//         "",
-//       initPhrase: `Запусти Сапёр`,
-//       getState,
-//     });
-//   }
-//   return createAssistant({ getState });
-// }
-
-// const getStateForAssistant = () => {
-  
-//   console.log("getStateForAssistant: this.state:", state);
-//   const state_ = {
-//     itemselector: {
-//       items: state.notes.map(({ id, title }, index) => ({
-//         number: index + 1,
-//         id,
-//         title,
-//       })),
-//     },
-//   };
-//   console.log("getStateForAssistant: state:", state);
-//   return state;
-// };
+const initializeAssistant = (getState) => {
+  if (process.env.NODE_ENV === "development") {
+    return createSmartappDebugger({
+      token:
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDUyNzAxOCwiaWF0IjoxNjI0NDQwNjA4LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiNTZkMjJhODctYjE5Yy00ZTYzLTgyN2ItMWYxYTg3ZWY0MWI0Iiwic2lkIjoiODlkYTllYzctOWVjNy00N2RjLThiMTYtOTM3ZDY5YTBiNGIyIn0.kStn0jp45KN66ux-k7SKRQz4fj6LQqTUdhFLQnVuW_j-6fU9dQULDK9P1M46teFe14GSLnM8VSenyzPM7shhvhhk73fU9KdVR9LpR1ja4vwSu8yaNTr_Hk0gHWeVvKCJTMonczMtyv8UuRxEzrMRV1KklnaPEAIv-d94IONgb86HhWHoUy0s-k6vbceCaPLmsPotw-m1V7jOt7kNuqOWFkS7sxOLr25nOAJHiQoeoqItVYtE9SyHhVVLXWI-29PAD-APfj41B1Hx8MUH5abNxYAyaUvscuN85nbiHfu4-zSYes0Fo0h0skzgVaEezuLMHErIskjEZVEMf21jmnuBRRqcw1sUS2GQsno96G0HwVGyehLyElkrtxGcK9GBhY05q6vhq2A7-GyRGJazqwLFoR1uPqoy73wcmsz3Wk0GsTIDLrlXouNOv_klmEJ_P93qXGOPJWKXKYmu7_cvccn1Zq4k-CX1oRjuhurCQiWoVKpSVcrBdFmcIbZhDegwlPyEmiRACtPrPhKAY8jDOlV05gVIO30rgc6nsBdDmJMJ8yaJEMdlA0tUF4FOmCLlzCrKqizZuq3QaNOqR3WrrEyvIKP_yOR7JRrd_AYvTFZWvm1yWDyClW3OcEYRna6H_23OehpIpW94edem1AWL1QSfT8t091fe4uyLADyl2eLS15w" ??
+        "",
+      initPhrase: `Запусти Сапёр`,
+      getState,
+    });
+  }
+  return createAssistant({ getState });
+}
 
 const App = () => {
-  //var assistant = useRef()
+  var assistant = useRef()
+  var state = {
+    notes: [],
+  };
 
-  // useEffect(() => {
-  //   assistant.current = initializeAssistant(() => getStateForAssistant());
-  //   assistant.current.on("start", (event) => {
-  //     console.log(`assistant.on(start)`, event);
-  //   });
+  const getStateForAssistant = () => {
+    console.log("getStateForAssistant: this.state:", state);
+    const state_ = {
+      itemselector: {
+        items: state.notes.map(({ id, title }, index) => ({
+          number: index + 1,
+          id,
+          title,
+        })),
+      },
+    };
+    console.log("getStateForAssistant: state:", state);
+    return state_;
+  };
+
+  useEffect(() => {
+    assistant.current = initializeAssistant(() => getStateForAssistant());
+    assistant.current.on("start", (event) => {
+      console.log(`assistant.on(start)`, event);
+    });
   
-  //   assistant.current.on(
-  //     "data",
-  //     (event) => {
-  //       const { action } = event;
-  //       dispatchAssistantAction(action);
-  //     },[]);
-  // }, []);
+    assistant.current.on("data", (event) => {
+      const { action } = event;
+      dispatchAssistantAction(action);
+    },[]);
+  }, []);
 
-  // const dispatchAssistantAction = async (action, coord_str) => {
-  //   console.log("dispatchAssistantAction", action);
-  //   if (action) {
-  //     switch (action.type) {
-  //       case 'new_game':
-  //         return restartGame();
-        
-  //       //  case 'open_field':
-  //       //   return Field.openCellWithStr(action.note)
+  const dispatchAssistantAction = async (action) => {
+    console.log("dispatchAssistantAction", action);
+    if (action) {
+      switch (action.type) {
+        case 'new_game':
+          return restartGame();
 
-  //       // case 'notice_field':
-  //       //   //return console.log(action.note)
-  //       //   return Field.toggleFlagWithStr(action.note)
-
-  //       //  case 'change_level':
-  //       //   //return console.log(action.note)
-  //       //   return Field.calculateFieldData(action.note)
-
-  //       default:
-  //         throw new Error();
-  //     }
-  //   }
-  // };
+        default:
+          throw new Error();
+      }
+    }
+  };
 
   /* State Hooks */
 
