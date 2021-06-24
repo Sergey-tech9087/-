@@ -18,7 +18,7 @@
 }
 
 .field_beginner {
-    grid-template-columns: repeat(9, 30px);
+    grid-template-columns: repeat(21, 30px);
 }
 
 .field_profi {
@@ -62,8 +62,7 @@
 }
 
 .field__flags-count > img {
-    margin-right: 5px;
-    
+    margin-right: 5px;    
 }
 
 .field__letters {
