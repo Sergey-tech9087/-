@@ -18,6 +18,7 @@ const App = () => {
 
   const startGame = () => {
     setStatus("started");
+    // callback();
   };
 
   const loseGame = () => {

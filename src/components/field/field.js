@@ -15,7 +15,7 @@ const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development"/*"production"*/) {
     return createSmartappDebugger({
       token:
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDYxMzQ1NSwiaWF0IjoxNjI0NTI3MDQ1LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiZDcyYWQzMTItYTA5YS00NWI2LTk5MDEtZGViOTRjYjcxODRiIiwic2lkIjoiYTkzYTlkOWUtYWI2YS00YjFiLTliODctOGJhODM1NjYxMGFhIn0.r28WB927JNpiMmI9mHkEKDAGZzziVpvxt7qDM4ICZlbUYwZroXvltyOQgi9GLZLdNotnqMlStgepCBoQKV0GRgUO5-P9ZRHruwVdqanGGl7tpLAkzf503c0140gP1X7myxpw72lFr5hQwNYrtsJVUHjPxjZn6FUJMMhE-TyszgeFFEw5AMWeYFqLJudXICp8Eazx9AxKOaIobq7ZQgET12uG3nckufdVsu1YAWcCP5OfTQ4ExzYenxnEtShfm7X47TOwwWKWlnwntoXfmUIGEA1h34_y3irWEPeTp0w9CBeWpMqapa4R2bR8Y1NJe3QOodRXTQBH6Nkec1_OtKMjP6dz8YNevtjvghrd4G2ecvIfJlkMKXYaKXuISUQLPOTu0urX6kJSmzQqoQgkI5sklsTrmf07UWbn7Vx03V5CEtuShIis_qHbqpwZ_bCK80_me3IMl1Kt9-JNbE13MS135GAXIT86jtHdEigxvYQp19_W9oUihbX9gzlGwlG_6PyJXiHR2HnctAqwsmKXeGq2mHtqGLzm7c9hf2u1soWTeNab-gewcW8L5sCAekH7Sx-3SFlBhS8PwyIOc467BCn1Kq2nuFfyUose49U-kaRcMAEW-_YiDrdpgBFK2ss6E0wy3yaICup8G18jn3AEOnMzopAWzqXG4nGV4Y8pRonM1Ds" ??
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDcwNTA4MCwiaWF0IjoxNjI0NjE4NjcwLCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiODI4M2NkNzMtYmVmYy00YTlhLThhMWUtOWM0ZjMwYzc5YzYzIiwic2lkIjoiYmIzZDJiOTEtZmEyYi00YzY0LWFiMzktOGJhNjdlZDM0OWMxIn0.MYxrBpHRuBHBamgu4GSD-_Pcymw9x-m8kLxkoQ5H-nJMKEzNaD_7--eQzc_ZM8KJZ1afCCHf-uYkjD2Ko21NrttBPd5w4L7upx9RkVsnqpC8IFV9IbmDQ3G531PeIRHRxd46bT2JV-MDV_7yVrSQ0Y_RURd0i6hH_oLJ4UFQVgwzVN8Wp2SdjIyvWzIQiRhE7mPRC6Y-pxc6-a81BYyIP4G3_btmz28uHre_gBoafhlBqsaNV74aSg0K3KJdvLtZX2ojCuw7w4zQg_19zBXzsp4inS2WoUqlgR9bQbtrpCFdJsmIQYkfd6Is-Sm1h1qWzUqsIQisSWoCFJ7_7J5tA1REKc26xPZPcv30NmVy_Jvtu6GO_pu31ofPPm-Kjz_tKPL7LktWx-zmXiMw7fHMKtBFLhaS8fNq6GKAPFjRRWWaG0gIEdMPjrCf0Sbm9nrg4sv4ShVssa5yy5S5fNp2kEekbAjN3otNuaITFMoJf55yRsAaoleCWgqLY19Oyb4lqOhIdGo1uXVkC3ts2tZZOvIrpAl0DKj7TCNnhlCUrmG0YA0aodf1yI8VjxFuL1_edDgWyTNG2N3B3CxMhWvS9yQoiAX-59Q8xuUYhYng7bs9b6tlNeC09E6Bf6imWkborFuZNkF34UX-gWn_4-9rwXouhzbiNzdXIxwt1QFjFJc" ??
         "",
       initPhrase: `Запусти Профессиональный сапёр`,
       getState,
@@ -71,52 +71,31 @@ const Field = ({
 
   const dispatchAssistantAction = async (action) => {
     console.log("dispatchAssistantAction", action);
-    if (action) {
-      
+    if (action) {      
       switch (action.type) {
         case 'new_game':
           console.log(status)
           restartGame();
+          console.log(status)
           break;
 
         case 'open_field':
-          console.log(action.note)
-
-          // let str = action.note
-          // let substr1 = 'один'
-          // let substr2 = 'два'
-          // let substr3 = 'три'
-          // let substr4 = 'четыре'
-          // let substr5 = 'пять'
-          // let substr6 = 'шесть'
-          // let substr7 = 'семь'
-          // let substr8 = 'восемь'
-          // let substr9 = 'девять'
-          // let substr10 = 'десять'
-          // let substr11 = 'одиннадцать'
-          // let substr12 = 'двенадцать'
-          // let substr13 = 'тринадцать'
-          // let substr14 = 'четырнадцать'
-          // let substr15 = 'пятнадцать'
-
-          // console.log(str.indexOf(substr1))
-
-          if(status === "not_started"){
-            console.log("0")
+          console.log(status)
+          if(status === "not_started"){            
             const x_raw = action.note.charAt(0).toUpperCase();
             const y_raw = Number(action.note.substr(1));
             const pos = strToCoordinateObj(y_raw, x_raw); 
             newGame(pos);
-
+            setTimeout(() =>  console.log(status), 500)
           }else if (status === "started"){
             console.log("1")
             openCellWithStr(action.note)
+            console.log(status)
           }
-          // console.log(status)
-
           break;
+
         case 'set_flag':
-          toggleFlagWithStr(action.note)
+          toggleFlagWithStr(action, action.note)
           break;
 
         default:
@@ -126,7 +105,7 @@ const Field = ({
   };
 
   const calculateFieldData = (difficulty) => {
-    switch (difficulty) { 
+    switch (difficulty) {
       case "amateur":
         return {
           x: 15,
@@ -141,9 +120,9 @@ const Field = ({
         };
       default:
         return {
-          x: 20,
-          y: 15,
-          mines_count: 65,
+          x: 8,
+          y: 8,
+          mines_count: 10,
         };
     }
   };
@@ -239,6 +218,10 @@ const Field = ({
       };
     } else {
       alert("Ошибка парсинга координатной строки");
+      return {
+        y: "err",
+        x: "err",
+      };
     }
   };
 
@@ -362,10 +345,18 @@ const Field = ({
     const field_divs = [];
     field_divs.push(<div key="-А0"></div>);
     for (let i = 0; i < field_size.x; i++) {
-      field_divs.push(<div key={LETTERS[i]}>{LETTERS[i]}</div>);
+      field_divs.push(
+        <div className="field__letters" key={LETTERS[i]}>
+          {LETTERS[i]}
+        </div>
+      );
     }
     for (let i = 1; i <= field_size.y; i++) {
-      field_divs.push(<div key={i}>{i}</div>);
+      field_divs.push(
+        <div className="field__numbers" key={i}>
+          {i}
+        </div>
+      );
       for (let j = 0; j < field_size.x; j++) {
         field_divs.push(
           <FieldCell
@@ -431,7 +422,7 @@ const Field = ({
             onClick={restartGame}
           >
             <span className="field__poster-text">
-              {status === "won" ? "Победа!" : "Попробуйте ещё раз!"}
+              {status === "won" ? "Победа!" : "Проиграл!"}
             </span>
           </div>
         ) : null}
