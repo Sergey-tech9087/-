@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import Field from "../field/field";
 import Options from "../options/options";
@@ -7,30 +7,37 @@ const App = () => {
   /* State Hooks */
 
   const [difficulty, setDifficulty] = useState("beginner");
-  const [status, setStatus] = useState("not_started");
+  //const [status, setStatus] = useState("not_started");
+
+  const status = useRef("not_started")
 
   /* End of State Hooks */
 
   const changeDifficulty = (new_difficulty) => {
-    setStatus("not_started");
+    //setStatus("not_started");
+    status.current = "not_started"
     setDifficulty(new_difficulty);
   };
 
   const startGame = () => {
-    setStatus("started");
+    //setStatus("started");
+    status.current = "started"
     // callback();
   };
 
   const loseGame = () => {
-    setStatus("lost");
+    status.current = "lost"
+    //setStatus("lost");
   };
 
   const winGame = () => {
-    setStatus("won");
+    status.current = "won"
+    //setStatus("won");
   };
 
   const restartGame = () => {
-    setStatus("not_started");
+    status.current = "not_started"
+    //setStatus("not_started");
   };
 
   return (
