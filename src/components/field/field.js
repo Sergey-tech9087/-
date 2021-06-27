@@ -34,7 +34,7 @@ const Field = ({
 }) => {
   const LETTERS = "АБВГДЕЖЗИКЛМНОПРСТУФ".split("");
   useEffect(() => console.log(fieldMatrix));
-  
+
   // independent functions
 
   var assistant = useRef()
@@ -43,7 +43,7 @@ const Field = ({
   };
 
   const getStateForAssistant = () => {
-    console.log("getStateForAssistant: this.state:", state);
+    //console.log("getStateForAssistant: this.state:", state);
     const state_ = {
       itemselector: {
         items: state.notes.map(({ id, title }, index) => ({
@@ -53,7 +53,7 @@ const Field = ({
         })),
       },
     };
-    console.log("getStateForAssistant: state:", state);
+    //console.log("getStateForAssistant: state:", state);
     return state_;
   };
 
@@ -71,31 +71,19 @@ const Field = ({
 
   const dispatchAssistantAction = async (action) => {
     console.log("dispatchAssistantAction", action);
-    if (action) {      
+    if (action) {  
+      console.log("Статус сбер", status);          
       switch (action.type) {
         case 'new_game':
-          console.log(status)
           restartGame();
-          console.log(status)
           break;
 
         case 'open_field':
-          console.log(status)
-          if(status === "not_started"){            
-            const x_raw = action.note.charAt(0).toUpperCase();
-            const y_raw = Number(action.note.substr(1));
-            const pos = strToCoordinateObj(y_raw, x_raw); 
-            newGame(pos);
-            setTimeout(() =>  console.log(status), 500)
-          }else if (status === "started"){
-            console.log("1")
-            openCellWithStr(action.note)
-            console.log(status)
-          }
+          openCellWithStr(action.note);
           break;
 
         case 'set_flag':
-          toggleFlagWithStr(action, action.note)
+          toggleFlagWithStr(action, action.note);
           break;
 
         default:
@@ -167,7 +155,7 @@ const Field = ({
     generateEmptyFieldMatrix(fieldData)
   );
 
-  useEffect(() => {}, [fieldData]);
+  // useEffect(() => {}, [fieldData]);
 
   //field data dependent
 
@@ -226,22 +214,22 @@ const Field = ({
   };
 
   const openCellWithStr = (coord_str) => {
-    if (status === "started") {
-      const x_raw = coord_str.charAt(0).toUpperCase();
-      const y_raw = coord_str.substr(1);
-      const cell_div = document.querySelector(
-        `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
-      );
-      const pos = strToCoordinateObj(y_raw, x_raw);
-      if (cell_div != null && pos != null) {
+    const x_raw = coord_str.charAt(0).toUpperCase();
+    const y_raw = coord_str.substr(1);
+    console.log("Статус текущий 2:", status);
+    const cell_div = document.querySelector(
+      `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
+    );
+    const pos = strToCoordinateObj(y_raw, x_raw);
+    if (cell_div != null && pos != null) {
+      if (status === "started") {
+        console.log("Статус текущий 2_1:", status);      
         openCellWithObj(pos);
-      } else alert("Клетка с введёнными координатами не найдена");
-    } else if (status === "not_started") {
-      const x_raw = coord_str.charAt(0).toUpperCase();
-      const y_raw = coord_str.substr(1);
-      const pos = strToCoordinateObj(y_raw, x_raw);
-      newGame(pos);
-    }
+      } else if (status === "not_started") {
+        console.log("Статус текущий 2_2:", status);
+        newGame(pos);
+      }  
+    } else alert("Клетка с введёнными координатами не найдена");
   };
 
   const toggleFlag = (e, y = "Err", x = "Err") => {
