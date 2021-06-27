@@ -41,7 +41,7 @@ const FieldCell = ({
           ? " field__cell_flagged"
           : "")
       }
-      onClick={thisPress}
+      onClick={thisPress}      
       onContextMenu={(e) => toggleFlag(e, y, x)}
       data-x={key_str.charAt(0)}
       data-y={key_str.substr(1)}

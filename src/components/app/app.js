@@ -5,9 +5,12 @@ import Options from "../options/options";
 
 function App () {
   /* State Hooks */
-  const [difficulty, setDifficulty] = useState("beginner");
+  const [difficulty, setDifficulty] = useState("beginner");  
   const [status, setStatus] = useState("not_started");
+
+  
   console.log("Статус текущий:", status);
+
   /* End of State Hooks */
 
   const changeDifficulty = (new_difficulty) => {

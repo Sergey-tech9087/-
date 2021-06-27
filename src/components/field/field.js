@@ -15,7 +15,7 @@ const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development"/*"production"*/) {
     return createSmartappDebugger({
       token:
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDc4NzM5MSwiaWF0IjoxNjI0NzAwOTgxLCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiNWY0NjQ4OTEtYjJmZC00ZGM1LWJmZDAtNDZmYTk4N2Q5YzQ2Iiwic2lkIjoiYmJmZWViYTItN2U2YS00ZmZkLThkOTItOGU4NmM1YThmMmRkIn0.QFeVVBADCq7g7zXBLpEiFvN3uVH9aTimKxPtNIToXT-XKAB8ZQpPpjLRkwu6a5PHOiL9c1E55nSTIhxLwMfas2fmjES6XgpISEGgGk-Z9WHSzVcLcInBG94XkL0VB-KBxtCW13RPe26w0m6b9oQM1nZ_7-4qLMaYG-60jhsobYJIJg2WxpKsOrcm3ULErkTDZbd8mPBNhpwZL4oy0d3p8UW_ydDHNDBm5QnFeai31JP-mSz66XdEUbRPoVx8ceFNadcx_rre33ELOqCBkmO-aYebRewj3GnFVQpSWJbsqlb7o9xfqsXKh0rLrFgBlX_Knj17iCgEtl0oZ60Z_eSPRFx-5gPfyi_Trbj6MSSzyy-dOV_PtGPejmfpcbc9M4wKILiOsQl2MB1n1OW7zsd4gLUSY1oj2FuBk-hRpK3BsFas0ZbZSe3DEqZ0OszKO9I7trv7MWTvpwSqjppWsatyg8QCXJ8qnkuH18bQlC4LcF6MMDW7gGLlUGXAT2pVfJgD9Aclprx_4jzw7WyFl2ypmfo0mPyrzteaqChLiVlKNtgNu8pDD7CdZ9WwHoVWQQGMVSpikrdZrUob14cRGzhi_6v3wgfuLaOEb-EXH7ReAnU9xnttLLex3TOp5v_KO74yB2KySXeiAjiZKYrC-jGPbnPFyj6XZMW-QWI1XI9YxwM" ??
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDg5NzA2NSwiaWF0IjoxNjI0ODEwNjU1LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiYjVkMzJmNDMtMzljNS00YzgxLTkyNzMtNDM0NjMxOTU2YjI2Iiwic2lkIjoiMDQ5YjQ4ZjgtNjQyOS00ZGMyLTg5OTMtNjU2YzNmYTk0NDUzIn0.IN43xY0BkMFZdvCzrqLr8w9rqSjVMt_sZG4knFseSdzTaOUDgqGCWIwJhiMKzBR0ZSx2jMPkkHTFNRJ2O29_4MMM4cHcTfkveUIZavtdMUbnchs5IHLmXVMa8blOh08yOxt7btrEfSOMV-X2ldePk1VWa5sCIoIAoiQ4liU3TvS7t69zgK07f6sLtSNmeyUPfV8C2B0B9o10IZy4VtVU1JNy7d5-N1Py4mQY25lV8ixTKnvIFD5dtqOCv9NDcYgqrFpGMkTYKhaQAIsQj88g4jy4NmFHIF9kYuPO_0ZlnQxIi5RjnSOesfoOUciXA-zeX2HqJdR1LSocr023kzx5qCrXC56fl1KFSmUFFcOCiB2f1miYcEuUTuvij9ciBf3DboMriCBSx2w64rFv1ojvHc-eOfCuHovhESnB3IQ3oXIV3a5RRCaiyvSV0-aiCdXp2P7M0PDsSmmtEM6YaxFc1xs3uLGe0DShdieEMN8ZgKf3L00AsbS_ACy5hvjgwgZGxUXE7twqFAixMnSpAvxV8VsNVxr_DF5J2ZAboCglCFxhNthvEOaqB-4H2zKERYj-iUQ7a5sM0B_P87vrKJelK_xviS8gSNjT27no7v38-Zi3vsO8FIomn0Hk3t_v7pTeSnY9_eryLHcP1-qqMAOVYHjA6DEFanlM3C13-sy52d8" ??
         "",
       initPhrase: `Запусти Профессиональный сапёр`,
       getState,
@@ -30,15 +30,15 @@ const Field = ({
   onStart: startGame,
   onLose: loseGame,
   onWin: winGame,
-  onRestart: restartGame,
+  onRestart: restartGame
 }) => {
   const LETTERS = "АБВГДЕЖЗИКЛМНОПРСТУФ".split("");
   useEffect(() => console.log(fieldMatrix));
 
   // independent functions
 
-  var assistant = useRef()
-  var state = {
+  const assistant = useRef()
+  const state = {
     notes: [],
   };
 
@@ -83,7 +83,7 @@ const Field = ({
           break;
 
         case 'set_flag':
-          toggleFlagWithStr(action, action.note);
+          toggleFlagWithStr(action.note);
           break;
 
         default:
@@ -213,7 +213,7 @@ const Field = ({
     }
   };
 
-  const openCellWithStr = (coord_str) => {
+  const openCellWithStr = (coord_str) => {    
     const x_raw = coord_str.charAt(0).toUpperCase();
     const y_raw = coord_str.substr(1);
     console.log("Статус текущий 2:", status);
@@ -233,7 +233,7 @@ const Field = ({
   };
 
   const toggleFlag = (e, y = "Err", x = "Err") => {
-    e.preventDefault();
+     e.preventDefault();
     if (y in openedCellsMatrix) {
       if (x in openedCellsMatrix[y]) {
         if (openedCellsMatrix[y][x] !== 1 && status === "started") {
