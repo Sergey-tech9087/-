@@ -85,6 +85,8 @@ function App() {
     y: 'err',
   });
 
+  const [helpActive, setHelpActive] = useState(false);
+
   useEffect(() => {
     assistant.current = initializeAssistant(() => getStateForAssistant());
     assistant.current.on('start', (event) => {
@@ -199,6 +201,12 @@ function App() {
 
   const restartGame = () => {
     setStatus('not_started');
+  };
+
+  const setStatusPauseGame = () => {
+    if (statusRef.current === 'started') {
+      setStatus('pause');
+    }
   };
 
   const openCellWithObj = ({ y, x } = { y: 'err', x: 'err' }) => {
@@ -379,6 +387,14 @@ function App() {
         assistantCharacter={assistantCharacter}
       />
 
+      <Controllers
+        difficulty={difficulty}
+        onChangeDifficulty={changeDifficulty}
+        onRestart={restartGame}
+        onPauseGame={setStatusPauseGame}
+        onHelpActive={setHelpActive}
+      />
+
       <Field
         LETTERS={LETTERS}
         difficulty={difficulty}
@@ -387,13 +403,10 @@ function App() {
         fieldMatrix={fieldMatrix}
         openedCellsMatrix={openedCellsMatrix}
         onRestart={restartGame}
+        onStartGame={startGame}
         onOpenCellWithStr={openCellWithStr}
         onToggleFlag={toggleFlag}
         onNewGame={newGame}
-      />
-      <Controllers
-        onChangeDifficulty={changeDifficulty}
-        onRestart={restartGame}
       />
     </main>
   );
