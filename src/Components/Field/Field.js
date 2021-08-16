@@ -10,8 +10,8 @@ const Field = ({
   fieldData,
   fieldMatrix,
   openedCellsMatrix,
-  onRestart: restartGame,
-  onStartGame: startGame,
+  onRestart: setStatusRestartGame,
+  onStartGame: setStatusStartGame,
   onOpenCellWithStr: openCellWithStr,
   onToggleFlag: toggleFlag,
   onNewGame: newGame,
@@ -61,7 +61,7 @@ const Field = ({
               'field__poster' +
               (status === 'won' ? ' field__poster_win' : ' field__poster_lose')
             }
-            onClick={restartGame}
+            onClick={setStatusRestartGame}
           >
             <span className="field__poster-text">
               {status === 'won' ? 'Победа!' : 'Проиграл!'}
@@ -71,7 +71,7 @@ const Field = ({
         {status === 'pause' ? (
           <div
             className={'field__poster field__poster_pause'}
-            onClick={startGame}
+            onClick={setStatusStartGame}
           >
             <span className="field__poster-text">{'Пауза!'}</span>
           </div>

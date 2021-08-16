@@ -8,9 +8,11 @@ import {
 } from '@sberdevices/assistant-client';
 
 import DocumentStyle from '../../GlobalStyle';
-import Field from '../Field/Field';
 import Controllers from '../Panel/Controllers/Controllers';
+import Statistics from '../Panel/Statistics/Statistics';
+import Field from '../Field/Field';
 import Help from '../Panel/Controllers/Help/Help';
+
 import './App.css';
 
 const initializeAssistant = (getState) => {
@@ -59,6 +61,13 @@ const generateEmptyFieldMatrix = (field_data) => {
   return temp_field_matrix;
 };
 
+const emptyfirstOpened = () => {
+  return {
+    x: 'err',
+    y: 'err',
+  };
+};
+
 function App() {
   const LETTERS = 'АБВГДЕЖЗИКЛМНОПРСТУФ'.split('');
   const state = { notes: [] };
@@ -82,12 +91,17 @@ function App() {
   const [flagsCount, setFlagsCount, flagsCountRef] = useStateRef(
     fieldDataRef.current.mines_count
   );
-  const [firstOpened, setFirstOpened, firstOpenedRef] = useStateRef({
-    x: 'err',
-    y: 'err',
-  });
+  const [firstOpened, setFirstOpened, firstOpenedRef] = useStateRef(
+    emptyfirstOpened()
+  );
+
+  const [timeGame, setTimeGame] = useState(0);
 
   const [helpActive, setHelpActive] = useState(false);
+
+  const fieldNoOpenRef = useRef(
+    fieldDataRef.current.x * fieldDataRef.current.y
+  );
 
   useEffect(() => {
     assistant.current = initializeAssistant(() => getStateForAssistant());
@@ -124,24 +138,35 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (statusRef.current === 'not_started') {
+    if (statusRef.current === 'new') {
       const temp_field_data = calculateFieldData(difficultyRef.current);
       setFieldData(temp_field_data);
       setFieldMatrix(generateEmptyFieldMatrix(temp_field_data));
       setOpenedCellsMatrix(generateEmptyFieldMatrix(temp_field_data));
+      setFirstOpened(emptyfirstOpened());
+      setFlagsCount(temp_field_data.mines_count);
+      fieldNoOpenRef.current = temp_field_data.x * temp_field_data.y;
+      setTimeGame(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty, status]);
 
   useEffect(() => {
-    openCellWithObj(firstOpenedRef.current);
+    if (statusRef.current === 'started') {
+      openCellWithObj(firstOpenedRef.current);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstOpened]);
 
   useEffect(() => {
-    setFlagsCount(fieldDataRef.current.mines_count);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldData]);
+    if (status !== 'started') return;
+
+    const intervalId = setInterval(() => {
+      setTimeGame(timeGame + 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [status, timeGame]);
 
   const getStateForAssistant = () => {
     //console.log("getStateForAssistant: this.state:", state);
@@ -171,7 +196,7 @@ function App() {
           break;
 
         case 'new_game':
-          restartGame();
+          setStatusRestartGame();
           break;
 
         case 'open_field':
@@ -189,25 +214,18 @@ function App() {
   };
 
   const changeDifficulty = (new_difficulty) => {
-    setStatus('not_started');
     setDifficulty(new_difficulty);
+    setStatusRestartGame();
   };
 
-  // TODO: Убрать лишний вызов ???
-  const startGame = () => {
+  const setStatusStartGame = () => {
     setStatus('started');
   };
 
-  const loseGame = () => {
-    setStatus('lost');
-  };
-
-  const winGame = () => {
-    setStatus('won');
-  };
-
-  const restartGame = () => {
-    setStatus('not_started');
+  const setStatusRestartGame = () => {
+    if (statusRef.current !== 'new') {
+      setStatus('new');
+    }
   };
 
   const setStatusPauseGame = () => {
@@ -216,7 +234,7 @@ function App() {
     }
   };
 
-  const openCellWithObj = ({ y, x } = { y: 'err', x: 'err' }) => {
+  const openCellWithObj = ({ y, x } = emptyfirstOpened()) => {
     if (y in openedCellsMatrixRef.current) {
       if (x in openedCellsMatrixRef.current[y]) {
         if (openedCellsMatrixRef.current[y][x] === 0) {
@@ -224,8 +242,9 @@ function App() {
           const temp_opened_cells_matrix = openedCellsMatrixRef.current;
           temp_opened_cells_matrix[y][x] = 1;
           setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+          --fieldNoOpenRef.current;
           if (fieldMatrixRef.current[y][x] === -1) {
-            loseGame();
+            setStatus('lost');
             lost_flag = true;
           } else if (fieldMatrixRef.current[y][x] === 0) {
             for (let i = -1; i <= 1; i++) {
@@ -246,7 +265,7 @@ function App() {
               fieldDataRef.current.y * fieldDataRef.current.x -
                 fieldDataRef.current.mines_count
             ) {
-              winGame();
+              setStatus('won');
             }
           }
         }
@@ -281,7 +300,10 @@ function App() {
     if (cell_div != null && pos != null) {
       if (statusRef.current === 'started') {
         openCellWithObj(pos);
-      } else if (statusRef.current === 'not_started') {
+      } else if (
+        statusRef.current === 'not_started' ||
+        statusRef.current === 'new'
+      ) {
         newGame(pos);
       }
     } else alert('Клетка с введёнными координатами не найдена');
@@ -303,6 +325,8 @@ function App() {
               (temp_opened_cells_matrix[y][x] === -1 ? -1 : 1)
           );
           setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+          fieldNoOpenRef.current +=
+            temp_opened_cells_matrix[y][x] === -1 ? -1 : 1;
         }
       }
     }
@@ -375,15 +399,15 @@ function App() {
   };
 
   const newGame = (opened) => {
-    if (statusRef.current === 'not_started') {
+    if (statusRef.current === 'not_started' || statusRef.current === 'new') {
+      setStatusStartGame();
+      setFirstOpened(opened);
       setFieldMatrix(
         generateFieldMatrix(
           fieldDataRef.current,
           generateMines(fieldDataRef.current, opened)
         )
       );
-      startGame();
-      setFirstOpened(opened);
     }
   };
 
@@ -397,9 +421,18 @@ function App() {
       <Controllers
         difficulty={difficulty}
         onChangeDifficulty={changeDifficulty}
-        onRestart={restartGame}
+        onRestart={setStatusRestartGame}
         onPauseGame={setStatusPauseGame}
         onHelpActive={setHelpActive}
+      />
+
+      <Statistics
+        status={status}
+        fieldNoOpen={fieldNoOpenRef.current}
+        fieldCount={fieldData.x * fieldData.y}
+        flagsCount={flagsCount}
+        minesCount={fieldData.mines_count}
+        timeGame={timeGame}
       />
 
       <Field
@@ -409,8 +442,8 @@ function App() {
         fieldData={fieldData}
         fieldMatrix={fieldMatrix}
         openedCellsMatrix={openedCellsMatrix}
-        onRestart={restartGame}
-        onStartGame={startGame}
+        onRestart={setStatusRestartGame}
+        onStartGame={setStatusStartGame}
         onOpenCellWithStr={openCellWithStr}
         onToggleFlag={toggleFlag}
         onNewGame={newGame}

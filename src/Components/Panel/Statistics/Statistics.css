@@ -1,0 +1,22 @@
+.statistics-container {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.icon-warning {
+  margin-left: 20px;
+  display: inline-block;
+}
+
+.icon-clock {
+  margin-left: 20px;
+  display: inline-block;
+}
+
+.status {
+  margin-left: 20px;
+  display: inline-block;
+}

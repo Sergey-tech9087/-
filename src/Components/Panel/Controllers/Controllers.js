@@ -7,7 +7,7 @@ import './Controllers.css';
 const Controllers = ({
   difficulty,
   onChangeDifficulty: changeDifficulty,
-  onRestart: restartGame,
+  onRestart: setStatusRestartGame,
   onPauseGame: pauseGame,
   onHelpActive: setHelpActive,
 }) => {
@@ -57,7 +57,7 @@ const Controllers = ({
           view="primary"
           size="s"
           onClick={() => {
-            restartGame();
+            setStatusRestartGame();
           }}
         >
           Новая игра
