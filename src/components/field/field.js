@@ -1,28 +1,28 @@
 import {
   createSmartappDebugger,
   createAssistant,
-} from "@sberdevices/assistant-client";
+} from '@sberdevices/assistant-client';
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 
-import "./field.css";
-import flag from "../../assets/flag.svg";
+import './Field.css';
+import flag from '../../Assets/flag.svg';
 
-import FieldCell from "../field__cell/field__cell";
-import Inputs from "../inputs/inputs";
+import FieldCell from '../FieldCell/FieldCell';
 
 const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === "development"/*"production"*/) {
+  if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token:
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyNDg5NzA2NSwiaWF0IjoxNjI0ODEwNjU1LCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiYjVkMzJmNDMtMzljNS00YzgxLTkyNzMtNDM0NjMxOTU2YjI2Iiwic2lkIjoiMDQ5YjQ4ZjgtNjQyOS00ZGMyLTg5OTMtNjU2YzNmYTk0NDUzIn0.IN43xY0BkMFZdvCzrqLr8w9rqSjVMt_sZG4knFseSdzTaOUDgqGCWIwJhiMKzBR0ZSx2jMPkkHTFNRJ2O29_4MMM4cHcTfkveUIZavtdMUbnchs5IHLmXVMa8blOh08yOxt7btrEfSOMV-X2ldePk1VWa5sCIoIAoiQ4liU3TvS7t69zgK07f6sLtSNmeyUPfV8C2B0B9o10IZy4VtVU1JNy7d5-N1Py4mQY25lV8ixTKnvIFD5dtqOCv9NDcYgqrFpGMkTYKhaQAIsQj88g4jy4NmFHIF9kYuPO_0ZlnQxIi5RjnSOesfoOUciXA-zeX2HqJdR1LSocr023kzx5qCrXC56fl1KFSmUFFcOCiB2f1miYcEuUTuvij9ciBf3DboMriCBSx2w64rFv1ojvHc-eOfCuHovhESnB3IQ3oXIV3a5RRCaiyvSV0-aiCdXp2P7M0PDsSmmtEM6YaxFc1xs3uLGe0DShdieEMN8ZgKf3L00AsbS_ACy5hvjgwgZGxUXE7twqFAixMnSpAvxV8VsNVxr_DF5J2ZAboCglCFxhNthvEOaqB-4H2zKERYj-iUQ7a5sM0B_P87vrKJelK_xviS8gSNjT27no7v38-Zi3vsO8FIomn0Hk3t_v7pTeSnY9_eryLHcP1-qqMAOVYHjA6DEFanlM3C13-sy52d8" ??
-        "",
+        'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyOTE3Njc2MSwiaWF0IjoxNjI5MDkwMzUxLCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiOGJiYWI1MDEtZmE2Yy00OWVmLWE5OTQtZDI4OTBmY2U0MzU4Iiwic2lkIjoiM2QzMTAyMzAtNjY2OC00NjMzLTkzYjMtMjFhNDY4MGExOGYwIn0.jw6ReEuOit5TCVEoT61yjPo0ezmAtP1RM1-pp0Pa45Ly_qpagTC9g4l7a98PoybF4y99VQxgKcCVNfeOkOFpvA6vzv-B9jUKhne1JGtNj70OO4X8fIoDUHieD1kV8bSeqcVQcv6Ngv6le4Fldf4PFzPzrcQwLfGIZxl6eGkuCwEVF9PgcoC3cPJLGdcL7iI25zM5qcxnSp4cNB1ew_YRP_OyjLM57I3rjJ0VlsuQE9XH1h773Khtl2arislVmioijiIxiQcUV5S3Edmov0FZiovvubLfjNCk4ZEffN2OC-wORyv0nmULJgq-Et5Qqv6333BOe6zA1elXFtS8uMhFNfadE4-juEN8t9pPz6Po1D0e60RQcJth-Mm14tLB6-q7eSBq6ZrlZbBoPLijBlApVFKR2lMf5agqQLdUMvmdtlMhGiupq9RyNzQmdtRKxBgPeykpcW8VpjkMTU-H_y3yil7D4mFIj1Y_HaatdqVAdS4InsVAQPR4oh1rK2DW9bpx9d4olv1CCVkgcpsYMRvPPhZsEZPUOcSSxMoZr1FjLa84h45mNa_1HnU0pq3bqmdQHzMnLpKKhlf_GyRcRLg6mSCsuJ8yopUUdBSZmL_L7jF_MV0sRQUJSq7-zBLNX0AF5iEdQ4xOL5TyOZaVXh7VNGirIeEj4bkKQjT3E7iupCw' ??
+        '',
       initPhrase: `Запусти Профессиональный сапёр`,
       getState,
     });
   }
   return createAssistant({ getState });
-}
+};
 
 const Field = ({
   difficulty,
@@ -30,14 +30,14 @@ const Field = ({
   onStart: startGame,
   onLose: loseGame,
   onWin: winGame,
-  onRestart: restartGame
+  onRestart: restartGame,
 }) => {
-  const LETTERS = "АБВГДЕЖЗИКЛМНОПРСТУФ".split("");
+  const LETTERS = 'АБВГДЕЖЗИКЛМНОПРСТУФ'.split('');
   useEffect(() => console.log(fieldMatrix));
 
   // independent functions
 
-  const assistant = useRef()
+  const assistant = useRef();
   const state = {
     notes: [],
   };
@@ -59,20 +59,24 @@ const Field = ({
 
   useEffect(() => {
     assistant.current = initializeAssistant(() => getStateForAssistant());
-    assistant.current.on("start", (event) => {
+    assistant.current.on('start', (event) => {
       console.log(`assistant.on(start)`, event);
     });
-  
-    assistant.current.on("data", (event) => {
-      const { action } = event;
-      dispatchAssistantAction(action);
-    },[]);
+
+    assistant.current.on(
+      'data',
+      (event) => {
+        const { action } = event;
+        dispatchAssistantAction(action);
+      },
+      []
+    );
   }, []);
 
   const dispatchAssistantAction = async (action) => {
-    console.log("dispatchAssistantAction", action);
-    if (action) {  
-      console.log("Статус сбер", status);          
+    console.log('dispatchAssistantAction', action);
+    if (action) {
+      console.log('Статус сбер', status);
       switch (action.type) {
         case 'new_game':
           restartGame();
@@ -94,13 +98,13 @@ const Field = ({
 
   const calculateFieldData = (difficulty) => {
     switch (difficulty) {
-      case "amateur":
+      case 'amateur':
         return {
           x: 15,
           y: 15,
           mines_count: 40,
         };
-      case "profi":
+      case 'profi':
         return {
           x: 20,
           y: 15,
@@ -131,7 +135,7 @@ const Field = ({
   const [fieldData, setFieldData] = useState(calculateFieldData(difficulty));
 
   useEffect(() => {
-    if (status === "not_started") {
+    if (status === 'not_started') {
       const temp_field_data = calculateFieldData(difficulty);
       setFieldData(temp_field_data);
       setFieldMatrix(generateEmptyFieldMatrix(temp_field_data));
@@ -159,7 +163,7 @@ const Field = ({
 
   //field data dependent
 
-  const openCellWithObj = ({ y, x } = { y: "err", x: "err" }) => {
+  const openCellWithObj = ({ y, x } = { y: 'err', x: 'err' }) => {
     if (y in openedCellsMatrix) {
       if (x in openedCellsMatrix[y]) {
         if (openedCellsMatrix[y][x] === 0) {
@@ -205,38 +209,38 @@ const Field = ({
         x: x,
       };
     } else {
-      alert("Ошибка парсинга координатной строки");
+      alert('Ошибка парсинга координатной строки');
       return {
-        y: "err",
-        x: "err",
+        y: 'err',
+        x: 'err',
       };
     }
   };
 
-  const openCellWithStr = (coord_str) => {    
+  const openCellWithStr = (coord_str) => {
     const x_raw = coord_str.charAt(0).toUpperCase();
     const y_raw = coord_str.substr(1);
-    console.log("Статус текущий 2:", status);
+    console.log('Статус текущий 2:', status);
     const cell_div = document.querySelector(
       `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
     );
     const pos = strToCoordinateObj(y_raw, x_raw);
     if (cell_div != null && pos != null) {
-      if (status === "started") {
-        console.log("Статус текущий 2_1:", status);      
+      if (status === 'started') {
+        console.log('Статус текущий 2_1:', status);
         openCellWithObj(pos);
-      } else if (status === "not_started") {
-        console.log("Статус текущий 2_2:", status);
+      } else if (status === 'not_started') {
+        console.log('Статус текущий 2_2:', status);
         newGame(pos);
-      }  
-    } else alert("Клетка с введёнными координатами не найдена");
+      }
+    } else alert('Клетка с введёнными координатами не найдена');
   };
 
-  const toggleFlag = (e, y = "Err", x = "Err") => {
-     e.preventDefault();
+  const toggleFlag = (e, y = 'Err', x = 'Err') => {
+    e.preventDefault();
     if (y in openedCellsMatrix) {
       if (x in openedCellsMatrix[y]) {
-        if (openedCellsMatrix[y][x] !== 1 && status === "started") {
+        if (openedCellsMatrix[y][x] !== 1 && status === 'started') {
           const temp_opened_cells_matrix = openedCellsMatrix;
           temp_opened_cells_matrix[y][x] =
             temp_opened_cells_matrix[y][x] === -1 ? 0 : -1;
@@ -318,7 +322,7 @@ const Field = ({
   };
 
   const newGame = (opened) => {
-    if (status === "not_started") {
+    if (status === 'not_started') {
       setFieldMatrix(
         generateFieldMatrix(fieldData, generateMines(fieldData, opened))
       );
@@ -375,7 +379,7 @@ const Field = ({
 
   /* Initial State and State Setters */
 
-  const [firstOpened, setFirstOpened] = useState({ x: "err", y: "err" });
+  const [firstOpened, setFirstOpened] = useState({ x: 'err', y: 'err' });
 
   useEffect(() => {
     openCellWithObj(firstOpened);
@@ -400,23 +404,22 @@ const Field = ({
         <img src={flag} alt="Иконка флажка" />
         {flagsCount}
       </div>
-      <div className={"field field_" + difficulty}>
-        {status === "won" || status === "lost" ? (
+      <div className={'field field_' + difficulty}>
+        {status === 'won' || status === 'lost' ? (
           <div
             className={
-              "field__poster" +
-              (status === "won" ? " field__poster_win" : " field__poster_lose")
+              'field__poster' +
+              (status === 'won' ? ' field__poster_win' : ' field__poster_lose')
             }
             onClick={restartGame}
           >
             <span className="field__poster-text">
-              {status === "won" ? "Победа!" : "Проиграл!"}
+              {status === 'won' ? 'Победа!' : 'Проиграл!'}
             </span>
           </div>
         ) : null}
         {generateFieldDivs(fieldData)}
       </div>
-      <Inputs toggleFlag={toggleFlagWithStr} openCell={openCellWithStr} />
     </main>
   );
 };

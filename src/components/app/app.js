@@ -1,37 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 
-import Field from "../field/field";
-import Options from "../options/options";
+import Field from '../Field/Field';
+import Options from '../Panel/Controllers/Controllers';
+import './App.css';
 
-function App () {
+function App() {
   /* State Hooks */
-  const [difficulty, setDifficulty] = useState("beginner");  
-  const [status, setStatus] = useState("not_started");
+  const [difficulty, setDifficulty] = useState('beginner');
+  const [status, setStatus] = useState('not_started');
 
-  
-  console.log("Статус текущий:", status);
+  //const st = useRef();
+
+  // useEffect(() => {
+  //   setStatus("started");
+  // }, [status])
+
+  console.log('Статус текущий:', status);
 
   /* End of State Hooks */
 
   const changeDifficulty = (new_difficulty) => {
-    setStatus("not_started");
+    setStatus('not_started');
+    //st.current = "not_started";
     setDifficulty(new_difficulty);
   };
 
   const startGame = () => {
-    setStatus("started");
+    setStatus('started');
+    //st.current = "started";
   };
 
   const loseGame = () => {
-    setStatus("lost");
+    setStatus('lost');
+    //st.current = "lost";
   };
 
   const winGame = () => {
-    setStatus("won");
+    setStatus('won');
+    //st.current = "won";
   };
 
   const restartGame = () => {
-    setStatus("not_started");
+    setStatus('not_started');
+    //st.current = "not_started";
   };
 
   return (
@@ -39,6 +50,7 @@ function App () {
       <Field
         difficulty={difficulty}
         status={status}
+        //status={st.current}
         onStart={startGame}
         onWin={winGame}
         onLose={loseGame}
@@ -47,5 +59,5 @@ function App () {
       <Options onChangeDifficulty={changeDifficulty} onRestart={restartGame} />
     </main>
   );
-};
+}
 export default App;

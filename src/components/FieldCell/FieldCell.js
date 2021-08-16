@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import "./field__cell.css";
+import './FieldCell.css';
 
 const FieldCell = ({
   value,
@@ -30,18 +30,18 @@ const FieldCell = ({
   };
 
   const extra_class_opened =
-    value === -1 ? " field__cell_exploded" : " field__cell_discovered";
+    value === -1 ? ' field__cell_exploded' : ' field__cell_discovered';
   return (
     <div
       className={
-        "field__cell" +
+        'field__cell' +
         (isPressed
           ? extra_class_opened
           : isFlagged
-          ? " field__cell_flagged"
-          : "")
+          ? ' field__cell_flagged'
+          : '')
       }
-      onClick={thisPress}      
+      onClick={thisPress}
       onContextMenu={(e) => toggleFlag(e, y, x)}
       data-x={key_str.charAt(0)}
       data-y={key_str.substr(1)}

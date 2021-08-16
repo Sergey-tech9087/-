@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import "./options.css";
+import './Controllers.css';
 
 const Options = ({
   onChangeDifficulty: changeDifficulty,
