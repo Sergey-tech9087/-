@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+import useStateRef from 'react-usestateref';
+
 import {
   createSmartappDebugger,
   createAssistant,
@@ -10,8 +12,8 @@ import Controllers from '../Panel/Controllers/Controllers';
 import './App.css';
 
 const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === 'production') {
-    //if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -59,18 +61,24 @@ function App() {
   const LETTERS = 'АБВГДЕЖЗИКЛМНОПРСТУФ'.split('');
   const state = { notes: [] };
 
-  const [difficulty, setDifficulty] = useState('beginner');
-  const [status, setStatus] = useState('not_started');
+  const [difficulty, setDifficulty, difficultyRef] = useStateRef('beginner');
+  const [status, setStatus, statusRef] = useStateRef('not_started');
 
-  const [fieldData, setFieldData] = useState(calculateFieldData(difficulty));
-  const [fieldMatrix, setFieldMatrix] = useState(
-    generateEmptyFieldMatrix(fieldData)
+  const [fieldData, setFieldData, fieldDataRef] = useStateRef(
+    calculateFieldData(difficultyRef.current)
   );
-  const [openedCellsMatrix, setOpenedCellsMatrix] = useState(
-    generateEmptyFieldMatrix(fieldData)
+  const [fieldMatrix, setFieldMatrix, fieldMatrixRef] = useStateRef(
+    generateEmptyFieldMatrix(fieldDataRef.current)
   );
-  const [flagsCount, setFlagsCount] = useState(fieldData.mines_count);
-  const [firstOpened, setFirstOpened] = useState({ x: 'err', y: 'err' });
+  const [openedCellsMatrix, setOpenedCellsMatrix, openedCellsMatrixRef] =
+    useStateRef(generateEmptyFieldMatrix(fieldDataRef.current));
+  const [flagsCount, setFlagsCount, flagsCountRef] = useStateRef(
+    fieldDataRef.current.mines_count
+  );
+  const [firstOpened, setFirstOpened, firstOpenedRef] = useStateRef({
+    x: 'err',
+    y: 'err',
+  });
 
   const assistant = useRef();
 
@@ -91,8 +99,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (status === 'not_started') {
-      const temp_field_data = calculateFieldData(difficulty);
+    if (statusRef.current === 'not_started') {
+      const temp_field_data = calculateFieldData(difficultyRef.current);
       setFieldData(temp_field_data);
       setFieldMatrix(generateEmptyFieldMatrix(temp_field_data));
       setOpenedCellsMatrix(generateEmptyFieldMatrix(temp_field_data));
@@ -100,11 +108,13 @@ function App() {
   }, [difficulty, status]);
 
   useEffect(() => {
-    openCellWithObj(firstOpened);
+    openCellWithObj(firstOpenedRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstOpened]);
 
   useEffect(() => {
-    setFlagsCount(fieldData.mines_count);
+    setFlagsCount(fieldDataRef.current.mines_count);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldData]);
 
   const getStateForAssistant = () => {
@@ -168,17 +178,17 @@ function App() {
   };
 
   const openCellWithObj = ({ y, x } = { y: 'err', x: 'err' }) => {
-    if (y in openedCellsMatrix) {
-      if (x in openedCellsMatrix[y]) {
-        if (openedCellsMatrix[y][x] === 0) {
+    if (y in openedCellsMatrixRef.current) {
+      if (x in openedCellsMatrixRef.current[y]) {
+        if (openedCellsMatrixRef.current[y][x] === 0) {
           let lost_flag = false;
-          const temp_opened_cells_matrix = openedCellsMatrix;
+          const temp_opened_cells_matrix = openedCellsMatrixRef.current;
           temp_opened_cells_matrix[y][x] = 1;
           setOpenedCellsMatrix([...temp_opened_cells_matrix]);
-          if (fieldMatrix[y][x] === -1) {
+          if (fieldMatrixRef.current[y][x] === -1) {
             loseGame();
             lost_flag = true;
-          } else if (fieldMatrix[y][x] === 0) {
+          } else if (fieldMatrixRef.current[y][x] === 0) {
             for (let i = -1; i <= 1; i++) {
               for (let j = -1; j <= 1; j++) {
                 if (i !== 0 || j !== 0) {
@@ -189,12 +199,13 @@ function App() {
           }
           if (!lost_flag) {
             let explored_cells_amount = 0;
-            for (let row of openedCellsMatrix) {
+            for (let row of openedCellsMatrixRef.current) {
               explored_cells_amount += row.filter((cell) => cell === 1).length;
             }
             if (
               explored_cells_amount ===
-              fieldData.y * fieldData.x - fieldData.mines_count
+              fieldDataRef.current.y * fieldDataRef.current.x -
+                fieldDataRef.current.mines_count
             ) {
               winGame();
             }
@@ -224,17 +235,14 @@ function App() {
   const openCellWithStr = (coord_str) => {
     const x_raw = coord_str.charAt(0).toUpperCase();
     const y_raw = coord_str.substr(1);
-    console.log('Статус текущий 2:', status);
     const cell_div = document.querySelector(
       `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
     );
     const pos = strToCoordinateObj(y_raw, x_raw);
     if (cell_div != null && pos != null) {
-      if (status === 'started') {
-        console.log('Статус текущий 2_1:', status);
+      if (statusRef.current === 'started') {
         openCellWithObj(pos);
-      } else if (status === 'not_started') {
-        console.log('Статус текущий 2_2:', status);
+      } else if (statusRef.current === 'not_started') {
         newGame(pos);
       }
     } else alert('Клетка с введёнными координатами не найдена');
@@ -242,14 +250,18 @@ function App() {
 
   const toggleFlag = (e, y = 'Err', x = 'Err') => {
     e.preventDefault();
-    if (y in openedCellsMatrix) {
-      if (x in openedCellsMatrix[y]) {
-        if (openedCellsMatrix[y][x] !== 1 && status === 'started') {
-          const temp_opened_cells_matrix = openedCellsMatrix;
+    if (y in openedCellsMatrixRef.current) {
+      if (x in openedCellsMatrixRef.current[y]) {
+        if (
+          openedCellsMatrixRef.current[y][x] !== 1 &&
+          statusRef.current === 'started'
+        ) {
+          const temp_opened_cells_matrix = openedCellsMatrixRef.current;
           temp_opened_cells_matrix[y][x] =
             temp_opened_cells_matrix[y][x] === -1 ? 0 : -1;
           setFlagsCount(
-            flagsCount + (temp_opened_cells_matrix[y][x] === -1 ? -1 : 1)
+            flagsCountRef.current +
+              (temp_opened_cells_matrix[y][x] === -1 ? -1 : 1)
           );
           setOpenedCellsMatrix([...temp_opened_cells_matrix]);
         }
@@ -324,9 +336,12 @@ function App() {
   };
 
   const newGame = (opened) => {
-    if (status === 'not_started') {
+    if (statusRef.current === 'not_started') {
       setFieldMatrix(
-        generateFieldMatrix(fieldData, generateMines(fieldData, opened))
+        generateFieldMatrix(
+          fieldDataRef.current,
+          generateMines(fieldDataRef.current, opened)
+        )
       );
       startGame();
       setFirstOpened(opened);
