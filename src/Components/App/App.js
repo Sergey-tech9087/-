@@ -195,6 +195,27 @@ function App() {
           }
           break;
 
+        case 'change_difficulty':
+          let temp_difficulty = '';
+          switch (action.note) {
+            case 'новичок':
+              temp_difficulty = 'beginner';
+              break;
+            case 'любитель':
+              temp_difficulty = 'amateur';
+              break;
+            case 'профи':
+              temp_difficulty = 'profi';
+              break;
+            default:
+              break;
+          }
+
+          if (temp_difficulty !== '') {
+            changeDifficulty(temp_difficulty);
+          }
+          break;
+
         case 'new_game':
           setStatusRestartGame();
           break;
@@ -203,8 +224,24 @@ function App() {
           openCellWithStr(action.note);
           break;
 
-        case 'set_flag':
-          toggleFlagWithStr(action.note);
+        case 'toggle_flag':
+          toggleFlag(action.note);
+          break;
+
+        case 'set_pause':
+          setStatusPauseGame();
+          break;
+
+        case 'continue_game':
+          setStatusStartGame();
+          break;
+
+        case 'call_help':
+          setHelpActive(true);
+          break;
+
+        case 'close_help':
+          setHelpActive(false);
           break;
 
         default:
@@ -283,10 +320,7 @@ function App() {
       };
     } else {
       alert('Ошибка парсинга координатной строки');
-      return {
-        y: 'err',
-        x: 'err',
-      };
+      return emptyfirstOpened();
     }
   };
 
@@ -296,8 +330,11 @@ function App() {
     const cell_div = document.querySelector(
       `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
     );
-    const pos = strToCoordinateObj(y_raw, x_raw);
-    if (cell_div != null && pos != null) {
+    let pos = null;
+    if (cell_div != null) {
+      pos = strToCoordinateObj(y_raw, x_raw);
+    }
+    if (cell_div != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
       if (statusRef.current === 'started') {
         openCellWithObj(pos);
       } else if (
@@ -306,35 +343,40 @@ function App() {
       ) {
         newGame(pos);
       }
-    } else alert('Клетка с введёнными координатами не найдена');
+    } else alert('Клетка с введёнными координатами не найдена!');
   };
 
-  const toggleFlag = (e, y = 'Err', x = 'Err') => {
-    e.preventDefault();
-    if (y in openedCellsMatrixRef.current) {
-      if (x in openedCellsMatrixRef.current[y]) {
-        if (
-          openedCellsMatrixRef.current[y][x] !== 1 &&
-          statusRef.current === 'started'
-        ) {
-          const temp_opened_cells_matrix = openedCellsMatrixRef.current;
-          temp_opened_cells_matrix[y][x] =
-            temp_opened_cells_matrix[y][x] === -1 ? 0 : -1;
-          setFlagsCount(
-            flagsCountRef.current +
-              (temp_opened_cells_matrix[y][x] === -1 ? -1 : 1)
-          );
-          setOpenedCellsMatrix([...temp_opened_cells_matrix]);
-          fieldNoOpenRef.current +=
-            temp_opened_cells_matrix[y][x] === -1 ? -1 : 1;
+  const toggleFlag = (coord_str) => {
+    const x_raw = coord_str.charAt(0).toUpperCase();
+    const y_raw = coord_str.substr(1);
+    const cell_div = document.querySelector(
+      `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
+    );
+    let pos = null;
+    if (cell_div != null) {
+      pos = strToCoordinateObj(y_raw, x_raw);
+    }
+    if (cell_div != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
+      if (pos.y in openedCellsMatrixRef.current) {
+        if (pos.x in openedCellsMatrixRef.current[pos.y]) {
+          if (
+            openedCellsMatrixRef.current[pos.y][pos.x] !== 1 &&
+            statusRef.current === 'started'
+          ) {
+            const temp_opened_cells_matrix = openedCellsMatrixRef.current;
+            temp_opened_cells_matrix[pos.y][pos.x] =
+              temp_opened_cells_matrix[pos.y][pos.x] === -1 ? 0 : -1;
+            setFlagsCount(
+              flagsCountRef.current +
+                (temp_opened_cells_matrix[pos.y][pos.x] === -1 ? -1 : 1)
+            );
+            setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+            fieldNoOpenRef.current +=
+              temp_opened_cells_matrix[pos.y][pos.x] === -1 ? -1 : 1;
+          }
         }
       }
-    }
-  };
-
-  const toggleFlagWithStr = (e, str) => {
-    const coord = strToCoordinateObj(str.substr(1), str.charAt(0));
-    toggleFlag(e, coord.y, coord.x);
+    } else alert('Клетка с введёнными координатами не найдена!');
   };
 
   const randomMine = (field_data, opened) => {
@@ -436,17 +478,16 @@ function App() {
       />
 
       <Field
-        LETTERS={LETTERS}
         difficulty={difficulty}
         status={status}
         fieldData={fieldData}
         fieldMatrix={fieldMatrix}
         openedCellsMatrix={openedCellsMatrix}
-        onRestart={setStatusRestartGame}
+        LETTERS={LETTERS}
+        onRestartGame={setStatusRestartGame}
         onStartGame={setStatusStartGame}
         onOpenCellWithStr={openCellWithStr}
         onToggleFlag={toggleFlag}
-        onNewGame={newGame}
       />
 
       <Help

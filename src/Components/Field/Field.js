@@ -1,20 +1,20 @@
 import React from 'react';
 
-import FieldCell from '../FieldCell/FieldCell';
 import './Field.css';
+import FieldCell from '../FieldCell/FieldCell';
+//import flag from '../../Assets/flag_white.svg';
 
 const Field = ({
-  LETTERS,
   difficulty,
   status,
   fieldData,
   fieldMatrix,
   openedCellsMatrix,
-  onRestart: setStatusRestartGame,
+  LETTERS,
+  onRestartGame: setStatusRestartGame,
   onStartGame: setStatusStartGame,
   onOpenCellWithStr: openCellWithStr,
   onToggleFlag: toggleFlag,
-  onNewGame: newGame,
 }) => {
   const generateFieldDivs = (field_size) => {
     const field_divs = [];
@@ -41,10 +41,7 @@ const Field = ({
             is_flagged={openedCellsMatrix[i - 1][j] === -1}
             onPress={openCellWithStr}
             onRightClick={toggleFlag}
-            onNewGame={newGame}
             value={fieldMatrix[i - 1][j]}
-            y={i - 1}
-            x={j}
           />
         );
       }

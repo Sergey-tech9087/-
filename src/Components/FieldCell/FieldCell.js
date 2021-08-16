@@ -3,15 +3,12 @@ import React, { useState, useEffect } from 'react';
 import './FieldCell.css';
 
 const FieldCell = ({
-  value,
+  key_str,
   is_pressed,
   is_flagged,
-  onRightClick: toggleFlag,
   onPress: openCellWithStr,
-  onNewGame: newGame,
-  key_str,
-  x,
-  y,
+  onRightClick: toggleFlag,
+  value,
 }) => {
   const [isPressed, setPressed] = useState(false);
   const [isFlagged, setFlagged] = useState(false);
@@ -22,11 +19,12 @@ const FieldCell = ({
   }, [is_pressed, is_flagged]);
 
   const thisPress = () => {
-    newGame({
-      y: y,
-      x: x,
-    });
     openCellWithStr(key_str);
+  };
+
+  const thisRightClick = (e) => {
+    e.preventDefault();
+    toggleFlag(key_str);
   };
 
   const extra_class_opened =
@@ -42,7 +40,7 @@ const FieldCell = ({
           : '')
       }
       onClick={thisPress}
-      onContextMenu={(e) => toggleFlag(e, y, x)}
+      onContextMenu={(e) => thisRightClick(e)}
       data-x={key_str.charAt(0)}
       data-y={key_str.substr(1)}
     >
