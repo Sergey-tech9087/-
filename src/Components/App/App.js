@@ -7,13 +7,14 @@ import {
   createAssistant,
 } from '@sberdevices/assistant-client';
 
+import DocumentStyle from '../../GlobalStyle';
 import Field from '../Field/Field';
 import Controllers from '../Panel/Controllers/Controllers';
 import './App.css';
 
 const initializeAssistant = (getState) => {
-  //if (process.env.NODE_ENV === 'production') {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -61,6 +62,10 @@ function App() {
   const LETTERS = 'АБВГДЕЖЗИКЛМНОПРСТУФ'.split('');
   const state = { notes: [] };
 
+  const assistant = useRef();
+  const [themeColorsDark, setThemeColorsDark] = useState(true);
+  const [assistantCharacter, setAssistantCharacter] = useState('sber');
+
   const [difficulty, setDifficulty, difficultyRef] = useStateRef('beginner');
   const [status, setStatus, statusRef] = useStateRef('not_started');
 
@@ -80,8 +85,6 @@ function App() {
     y: 'err',
   });
 
-  const assistant = useRef();
-
   useEffect(() => {
     assistant.current = initializeAssistant(() => getStateForAssistant());
     assistant.current.on('start', (event) => {
@@ -91,11 +94,24 @@ function App() {
     assistant.current.on(
       'data',
       (event) => {
+        console.log('event.type', event.type);
+        switch (event.type) {
+          case 'character':
+            setAssistantCharacter(event.character.id);
+            break;
+          // TODO: Сделать закрытие приложения или не надо ???
+          // case 'close_app':
+          // break;
+          // TODO: Убрать если не понадобиться ???
+          default:
+            break;
+        }
         const { action } = event;
         dispatchAssistantAction(action);
       },
       []
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -105,6 +121,7 @@ function App() {
       setFieldMatrix(generateEmptyFieldMatrix(temp_field_data));
       setOpenedCellsMatrix(generateEmptyFieldMatrix(temp_field_data));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty, status]);
 
   useEffect(() => {
@@ -135,8 +152,15 @@ function App() {
   const dispatchAssistantAction = async (action) => {
     console.log('dispatchAssistantAction', action);
     if (action) {
-      console.log('Статус сбер', status);
       switch (action.type) {
+        case 'theme_colors':
+          if (action.note === 'тёмная') {
+            setThemeColorsDark(true);
+          } else if (action.note === 'светлая') {
+            setThemeColorsDark(false);
+          }
+          break;
+
         case 'new_game':
           restartGame();
           break;
@@ -350,13 +374,17 @@ function App() {
 
   return (
     <main className="app">
+      <DocumentStyle
+        themeColorsDark={themeColorsDark}
+        assistantCharacter={assistantCharacter}
+      />
+
       <Field
         LETTERS={LETTERS}
         difficulty={difficulty}
         status={status}
         fieldData={fieldData}
         fieldMatrix={fieldMatrix}
-        flagsCount={flagsCount}
         openedCellsMatrix={openedCellsMatrix}
         onRestart={restartGame}
         onOpenCellWithStr={openCellWithStr}

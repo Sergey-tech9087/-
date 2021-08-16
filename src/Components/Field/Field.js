@@ -1,6 +1,5 @@
 import React from 'react';
 
-import flag from '../../Assets/Flag.svg';
 import FieldCell from '../FieldCell/FieldCell';
 import './Field.css';
 
@@ -10,7 +9,6 @@ const Field = ({
   status,
   fieldData,
   fieldMatrix,
-  flagsCount,
   openedCellsMatrix,
   onRestart: restartGame,
   onOpenCellWithStr: openCellWithStr,
@@ -55,10 +53,6 @@ const Field = ({
 
   return (
     <main className="main">
-      <div className="field__flags-count">
-        <img src={flag} alt="Иконка флажка" />
-        {flagsCount}
-      </div>
       <div className={'field field_' + difficulty}>
         {status === 'won' || status === 'lost' ? (
           <div

@@ -1,5 +1,5 @@
 .field__cell {
-  background-color: darkgreen;
+  background-color: rgb(134, 78, 78);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 80%;
@@ -14,7 +14,7 @@
 }
 
 .field__cell_discovered {
-  background-color: lightgreen;
+  background-color: #b37b7b;
 }
 
 .field__cell_flagged {
