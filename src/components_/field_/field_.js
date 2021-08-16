@@ -5,8 +5,8 @@ import {
 
 import React, { useState, useEffect, useRef } from 'react';
 
-import './Field.css';
-import flag from '../../Assets/flag.svg';
+import './field_.css';
+import flag from '../../assets_/flag_.svg';
 
 import FieldCell from '../FieldCell/FieldCell';
 

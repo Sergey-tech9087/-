@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import Field from '../Field/Field';
+import Field from '../field_/field_';
 import Options from '../Panel/Controllers/Controllers';
 import './App.css';
 
