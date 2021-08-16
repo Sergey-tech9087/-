@@ -10,7 +10,7 @@
 
 .field__cell_exploded {
   background-color: tomato;
-  background-image: url('../../assets_/bomb_.svg');
+  background-image: url('../../Assets/Bomb.svg');
 }
 
 .field__cell_discovered {
@@ -18,5 +18,5 @@
 }
 
 .field__cell_flagged {
-  background-image: url('../../assets_/FlagWhite.svg');
+  background-image: url('../../Assets/FlagWhite.svg');
 }
