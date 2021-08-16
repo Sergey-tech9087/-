@@ -10,11 +10,12 @@ import {
 import DocumentStyle from '../../GlobalStyle';
 import Field from '../Field/Field';
 import Controllers from '../Panel/Controllers/Controllers';
+import Help from '../Panel/Controllers/Help/Help';
 import './App.css';
 
 const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === 'production') {
-    //if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -65,6 +66,7 @@ function App() {
   const assistant = useRef();
   const [themeColorsDark, setThemeColorsDark] = useState(true);
   const [assistantCharacter, setAssistantCharacter] = useState('sber');
+  const [assistantAppealOfficial, setassistantAppealOfficial] = useState(true);
 
   const [difficulty, setDifficulty, difficultyRef] = useStateRef('beginner');
   const [status, setStatus, statusRef] = useStateRef('not_started');
@@ -100,6 +102,11 @@ function App() {
         switch (event.type) {
           case 'character':
             setAssistantCharacter(event.character.id);
+            if (event.character.id === 'sber' || event.character.id === 'eva') {
+              setassistantAppealOfficial(true);
+            } else if (event.character.id === 'joy') {
+              setassistantAppealOfficial(false);
+            }
             break;
           // TODO: Сделать закрытие приложения или не надо ???
           // case 'close_app':
@@ -407,6 +414,12 @@ function App() {
         onOpenCellWithStr={openCellWithStr}
         onToggleFlag={toggleFlag}
         onNewGame={newGame}
+      />
+
+      <Help
+        active={helpActive}
+        setActive={setHelpActive}
+        assistantAppealOfficial={assistantAppealOfficial}
       />
     </main>
   );
