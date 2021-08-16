@@ -2,7 +2,7 @@ import React from 'react';
 
 import './Controllers.css';
 
-const Options = ({
+const Controllers = ({
   onChangeDifficulty: changeDifficulty,
   onRestart: restartGame,
 }) => {
@@ -29,4 +29,4 @@ const Options = ({
   );
 };
 
-export default Options;
+export default Controllers;

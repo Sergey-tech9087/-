@@ -14,10 +14,8 @@ const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === 'production') {
     //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
-      token:
-        'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWJhNjNmNGE2YzNjN2ViZWNjNmVmODE4N2FkZjJhOGVkYjJkMGRmNTVjMDdhYzViYzEwMjg3MGUxY2VmNjVlNjU3MWVmOTczZDVkNGIyMyIsImF1ZCI6IlZQUyIsImV4cCI6MTYyOTE3Njc2MSwiaWF0IjoxNjI5MDkwMzUxLCJpc3MiOiJLRVlNQVNURVIiLCJ0eXBlIjoiQmVhcmVyIiwianRpIjoiOGJiYWI1MDEtZmE2Yy00OWVmLWE5OTQtZDI4OTBmY2U0MzU4Iiwic2lkIjoiM2QzMTAyMzAtNjY2OC00NjMzLTkzYjMtMjFhNDY4MGExOGYwIn0.jw6ReEuOit5TCVEoT61yjPo0ezmAtP1RM1-pp0Pa45Ly_qpagTC9g4l7a98PoybF4y99VQxgKcCVNfeOkOFpvA6vzv-B9jUKhne1JGtNj70OO4X8fIoDUHieD1kV8bSeqcVQcv6Ngv6le4Fldf4PFzPzrcQwLfGIZxl6eGkuCwEVF9PgcoC3cPJLGdcL7iI25zM5qcxnSp4cNB1ew_YRP_OyjLM57I3rjJ0VlsuQE9XH1h773Khtl2arislVmioijiIxiQcUV5S3Edmov0FZiovvubLfjNCk4ZEffN2OC-wORyv0nmULJgq-Et5Qqv6333BOe6zA1elXFtS8uMhFNfadE4-juEN8t9pPz6Po1D0e60RQcJth-Mm14tLB6-q7eSBq6ZrlZbBoPLijBlApVFKR2lMf5agqQLdUMvmdtlMhGiupq9RyNzQmdtRKxBgPeykpcW8VpjkMTU-H_y3yil7D4mFIj1Y_HaatdqVAdS4InsVAQPR4oh1rK2DW9bpx9d4olv1CCVkgcpsYMRvPPhZsEZPUOcSSxMoZr1FjLa84h45mNa_1HnU0pq3bqmdQHzMnLpKKhlf_GyRcRLg6mSCsuJ8yopUUdBSZmL_L7jF_MV0sRQUJSq7-zBLNX0AF5iEdQ4xOL5TyOZaVXh7VNGirIeEj4bkKQjT3E7iupCw' ??
-        '',
-      initPhrase: `Запусти Профессиональный сапёр`,
+      token: process.env.REACT_APP_TOKEN ?? '',
+      initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
       getState,
     });
   }

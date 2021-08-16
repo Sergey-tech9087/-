@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import Field from '../Field/Field';
-import Options from '../Panel/Controllers/Controllers';
+import Controllers from '../Panel/Controllers/Controllers';
 import './App.css';
 
 function App() {
@@ -56,7 +56,10 @@ function App() {
         onLose={loseGame}
         onRestart={restartGame}
       />
-      <Options onChangeDifficulty={changeDifficulty} onRestart={restartGame} />
+      <Controllers
+        onChangeDifficulty={changeDifficulty}
+        onRestart={restartGame}
+      />
     </main>
   );
 }
