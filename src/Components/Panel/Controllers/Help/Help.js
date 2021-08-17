@@ -6,9 +6,10 @@ import './Help.css';
 
 const Help = ({
   active,
-  setActive: setHelpActive,
   assistantAppealOfficial,
+  onSetHelpActive: setHelpActive,
 }) => {
+  // Словарь формы обращения персонажа
   const helpText = () => {
     let dictAppeal = null;
     if (assistantAppealOfficial) {
@@ -30,14 +31,14 @@ const Help = ({
         word06: 'установи',
       };
     }
-    let temp_text = '';
-    temp_text = `Lorem ${dictAppeal.word01} ipsum ${dictAppeal.word02} dolor ${dictAppeal.word03} 
+    let tempText = '';
+    tempText = `Lorem ${dictAppeal.word01} ipsum ${dictAppeal.word02} dolor ${dictAppeal.word03} 
       sit ${dictAppeal.word04} amet, ${dictAppeal.word05} consectetur ${dictAppeal.word06} 
       adipiscing elit. Sed vehicula ullamcorper ligula, at tincidunt magna euismod in. Integer in
       fringilla nulla. Curabitur in efficitur enim, eu varius erat. Maecenas vel ante nibh. 
       Vivamus nulla lacus, rutrum non interdum quis, imperdiet quis purus. Fusce lobortis commodo 
       felis. Fusce auctor augue non neque luctus, et hendrerit arcu porta.`;
-    return temp_text;
+    return tempText;
   };
 
   return (

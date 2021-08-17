@@ -11,34 +11,35 @@ const Field = ({
   fieldMatrix,
   openedCellsMatrix,
   LETTERS,
-  onRestartGame: setStatusRestartGame,
-  onStartGame: setStatusStartGame,
+  onSetStatusRestartGame: setStatusRestartGame,
+  onSetStatusStartGame: setStatusStartGame,
   onOpenCellWithStr: openCellWithStr,
   onToggleFlag: toggleFlag,
 }) => {
-  const generateFieldDivs = (field_size) => {
-    const field_divs = [];
-    field_divs.push(<div key="-А0"></div>);
-    for (let i = 0; i < field_size.x; i++) {
-      field_divs.push(
+  // Генерация ячеек игрового поля
+  const generateFieldDivs = (fieldSize) => {
+    const fieldDivs = [];
+    fieldDivs.push(<div key="-А0"></div>);
+    for (let i = 0; i < fieldSize.x; i++) {
+      fieldDivs.push(
         <div className="field__letters" key={LETTERS[i]}>
           {LETTERS[i]}
         </div>
       );
     }
-    for (let i = 1; i <= field_size.y; i++) {
-      field_divs.push(
+    for (let i = 1; i <= fieldSize.y; i++) {
+      fieldDivs.push(
         <div className="field__numbers" key={i}>
           {i}
         </div>
       );
-      for (let j = 0; j < field_size.x; j++) {
-        field_divs.push(
+      for (let j = 0; j < fieldSize.x; j++) {
+        fieldDivs.push(
           <FieldCell
             key={LETTERS[j] + i}
-            key_str={LETTERS[j] + i}
-            is_pressed={openedCellsMatrix[i - 1][j] === 1}
-            is_flagged={openedCellsMatrix[i - 1][j] === -1}
+            keyStr={LETTERS[j] + i}
+            pressed={openedCellsMatrix[i - 1][j] === 1}
+            flagged={openedCellsMatrix[i - 1][j] === -1}
             onPress={openCellWithStr}
             onRightClick={toggleFlag}
             value={fieldMatrix[i - 1][j]}
@@ -46,7 +47,7 @@ const Field = ({
         );
       }
     }
-    return field_divs;
+    return fieldDivs;
   };
 
   return (

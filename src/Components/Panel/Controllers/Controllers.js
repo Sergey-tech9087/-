@@ -7,9 +7,9 @@ import './Controllers.css';
 const Controllers = ({
   difficulty,
   onChangeDifficulty: changeDifficulty,
-  onRestart: setStatusRestartGame,
-  onPauseGame: pauseGame,
-  onHelpActive: setHelpActive,
+  onSetStatusRestartGame: setStatusRestartGame,
+  onSetStatusPauseGame: setStatusPauseGame,
+  onSetHelpActive: setHelpActive,
 }) => {
   return (
     <div className="controller-container">
@@ -68,7 +68,7 @@ const Controllers = ({
           view="primary"
           size="s"
           onClick={() => {
-            pauseGame();
+            setStatusPauseGame();
           }}
         >
           Пауза

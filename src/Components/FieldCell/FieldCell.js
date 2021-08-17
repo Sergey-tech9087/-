@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import './FieldCell.css';
 
 const FieldCell = ({
-  key_str,
-  is_pressed,
-  is_flagged,
+  keyStr,
+  pressed,
+  flagged,
   onPress: openCellWithStr,
   onRightClick: toggleFlag,
   value,
@@ -13,36 +13,35 @@ const FieldCell = ({
   const [isPressed, setPressed] = useState(false);
   const [isFlagged, setFlagged] = useState(false);
 
+  // Обработка нажатия кнопки мыши и установки флага
   useEffect(() => {
-    setPressed(is_pressed);
-    setFlagged(is_flagged);
-  }, [is_pressed, is_flagged]);
+    setPressed(pressed);
+    setFlagged(flagged);
+  }, [pressed, flagged]);
 
+  // Обработка клика мыши
   const thisPress = () => {
-    openCellWithStr(key_str);
+    openCellWithStr(keyStr);
   };
 
+  // Обработка нажатия правой кнопки мыши
   const thisRightClick = (e) => {
     e.preventDefault();
-    toggleFlag(key_str);
+    toggleFlag(keyStr);
   };
 
-  const extra_class_opened =
+  const extraClassOpened =
     value === -1 ? ' field__cell_exploded' : ' field__cell_discovered';
   return (
     <div
       className={
         'field__cell' +
-        (isPressed
-          ? extra_class_opened
-          : isFlagged
-          ? ' field__cell_flagged'
-          : '')
+        (isPressed ? extraClassOpened : isFlagged ? ' field__cell_flagged' : '')
       }
       onClick={thisPress}
       onContextMenu={(e) => thisRightClick(e)}
-      data-x={key_str.charAt(0)}
-      data-y={key_str.substr(1)}
+      data-x={keyStr.charAt(0)}
+      data-y={keyStr.substr(1)}
     >
       {isPressed && value !== -1 ? value : null}
     </div>

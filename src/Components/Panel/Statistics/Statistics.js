@@ -7,17 +7,18 @@ import './Statistics.css';
 
 // TODO: Исключить вывод статуса (status - в параметрах и его вывод)
 const Statistics = ({
-  fieldNoOpen,
+  fieldNoOpenRef,
   fieldCount,
   flagsCount,
   minesCount,
   timeGame,
 }) => {
+  // Перевод времени
   const toHHMMSS = (secs) => {
-    let sec_num = parseInt(secs, 10);
-    let hours = Math.floor(sec_num / 3600);
-    let minutes = Math.floor(sec_num / 60) % 60;
-    let seconds = sec_num % 60;
+    let secNum = parseInt(secs, 10);
+    let hours = Math.floor(secNum / 3600);
+    let minutes = Math.floor(secNum / 60) % 60;
+    let seconds = secNum % 60;
 
     return [hours, minutes, seconds]
       .map((v) => (v < 10 ? '0' + v : v))
@@ -28,7 +29,7 @@ const Statistics = ({
   return (
     <div className="statistics-container">
       <IconApps />
-      <Badge text={`${fieldNoOpen} / ${fieldCount}`} size="l" />
+      <Badge text={`${fieldNoOpenRef} / ${fieldCount}`} size="l" />
 
       <IconWarning className="icon-warning" />
       <Badge text={`${flagsCount} / ${minesCount}`} size="l" />

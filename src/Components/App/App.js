@@ -15,6 +15,7 @@ import Help from '../Panel/Controllers/Help/Help';
 
 import './App.css';
 
+// Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
   //if (process.env.NODE_ENV === 'production') {
   if (process.env.NODE_ENV === 'development') {
@@ -27,40 +28,43 @@ const initializeAssistant = (getState) => {
   return createAssistant({ getState });
 };
 
+// Установка параметров игры для уровня сложности
 const calculateFieldData = (difficulty) => {
   switch (difficulty) {
     case 'amateur':
       return {
         x: 15,
         y: 15,
-        mines_count: 40,
+        minesCount: 40,
       };
     case 'profi':
       return {
         x: 20,
-        y: 15,
-        mines_count: 65,
+        y: 20,
+        minesCount: 70,
       };
     default:
       return {
         x: 8,
         y: 8,
-        mines_count: 10,
+        minesCount: 10,
       };
   }
 };
 
-const generateEmptyFieldMatrix = (field_data) => {
-  let temp_field_matrix = [];
-  for (let i = 0; i < field_data.y; i++) {
-    temp_field_matrix.push([]);
-    for (let j = 0; j < field_data.x; j++) {
-      temp_field_matrix[i].push(0);
+// Создание матрицы игрового поля с нулевыми значениями
+const generateEmptyFieldMatrix = (fieldData) => {
+  let tempFieldMatrix = [];
+  for (let i = 0; i < fieldData.y; i++) {
+    tempFieldMatrix.push([]);
+    for (let j = 0; j < fieldData.x; j++) {
+      tempFieldMatrix[i].push(0);
     }
   }
-  return temp_field_matrix;
+  return tempFieldMatrix;
 };
 
+// Сброс координат поля
 const emptyfirstOpened = () => {
   return {
     x: 'err',
@@ -70,49 +74,74 @@ const emptyfirstOpened = () => {
 
 function App() {
   const LETTERS = 'АБВГДЕЖЗИКЛМНОПРСТУФ'.split('');
+
+  // Список состояний Сбер ассистента
   const state = { notes: [] };
 
-  const assistant = useRef();
+  // Состояние Сбер ассистента
+  const assistantRef = useRef();
+
+  // Цветовая палитра ассистента (темная или светлая)
   const [themeColorsDark, setThemeColorsDark] = useState(true);
+
+  // Персонажи Сбер ассистента (sber, eva, joy)
   const [assistantCharacter, setAssistantCharacter] = useState('sber');
+
+  // Форма обращения персонажа
   const [assistantAppealOfficial, setassistantAppealOfficial] = useState(true);
 
+  // Уровни сложности игры
   const [difficulty, setDifficulty, difficultyRef] = useStateRef('beginner');
+
+  // Статусы игры
   const [status, setStatus, statusRef] = useStateRef('not_started');
 
+  // Параметры игры (размер поля и количество мин)
   const [fieldData, setFieldData, fieldDataRef] = useStateRef(
     calculateFieldData(difficultyRef.current)
   );
+
+  // Матрица исходного игрового поля
   const [fieldMatrix, setFieldMatrix, fieldMatrixRef] = useStateRef(
     generateEmptyFieldMatrix(fieldDataRef.current)
   );
+
+  // Матрица игрового поля с открытыми полями и установленными флагами
   const [openedCellsMatrix, setOpenedCellsMatrix, openedCellsMatrixRef] =
     useStateRef(generateEmptyFieldMatrix(fieldDataRef.current));
-  const [flagsCount, setFlagsCount, flagsCountRef] = useStateRef(
-    fieldDataRef.current.mines_count
-  );
+
+  // Координаты первого открытого поля (исключается попадание на мину)
   const [firstOpened, setFirstOpened, firstOpenedRef] = useStateRef(
     emptyfirstOpened()
   );
 
-  const [timeGame, setTimeGame] = useState(0);
+  // Осталось установить флагов
+  const [flagsCount, setFlagsCount, flagsCountRef] = useStateRef(
+    fieldDataRef.current.minesCount
+  );
 
-  const [helpActive, setHelpActive] = useState(false);
-
+  // Осталось неоткрытых полей
   const fieldNoOpenRef = useRef(
     fieldDataRef.current.x * fieldDataRef.current.y
   );
 
+  // Состояние вывода правил игры
+  const [helpActive, setHelpActive] = useState(false);
+
+  // Таймер отсчета времени (секундомер)
+  const [timeGame, setTimeGame] = useState(0);
+
+  // Инициализация Сбер ассистента и обработка событий ассистента
   useEffect(() => {
-    assistant.current = initializeAssistant(() => getStateForAssistant());
-    assistant.current.on('start', (event) => {
-      console.log(`assistant.on(start)`, event);
+    assistantRef.current = initializeAssistant(() => getStateForAssistant());
+    assistantRef.current.on('start', (event) => {
+      console.log(`assistantRef.on(start) - event:`, event);
     });
 
-    assistant.current.on(
+    assistantRef.current.on(
       'data',
       (event) => {
-        console.log('event.type', event.type);
+        console.log('assistantRef.on(data) - event:', event);
         switch (event.type) {
           case 'character':
             setAssistantCharacter(event.character.id);
@@ -122,10 +151,11 @@ function App() {
               setassistantAppealOfficial(false);
             }
             break;
+
           // TODO: Сделать закрытие приложения или не надо ???
           // case 'close_app':
           // break;
-          // TODO: Убрать если не понадобиться ???
+
           default:
             break;
         }
@@ -137,20 +167,22 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Установка исходных данных для начала новой игры (при смене уровня, новой игре или завершении игры)
   useEffect(() => {
     if (statusRef.current === 'new') {
-      const temp_field_data = calculateFieldData(difficultyRef.current);
-      setFieldData(temp_field_data);
-      setFieldMatrix(generateEmptyFieldMatrix(temp_field_data));
-      setOpenedCellsMatrix(generateEmptyFieldMatrix(temp_field_data));
+      const tempFieldData = calculateFieldData(difficultyRef.current);
+      setFieldData(tempFieldData);
+      setFieldMatrix(generateEmptyFieldMatrix(tempFieldData));
+      setOpenedCellsMatrix(generateEmptyFieldMatrix(tempFieldData));
       setFirstOpened(emptyfirstOpened());
-      setFlagsCount(temp_field_data.mines_count);
-      fieldNoOpenRef.current = temp_field_data.x * temp_field_data.y;
+      setFlagsCount(tempFieldData.minesCount);
+      fieldNoOpenRef.current = tempFieldData.x * tempFieldData.y;
       setTimeGame(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty, status]);
 
+  // Обработка при открытии первого поля (не попадаем на мину)
   useEffect(() => {
     if (statusRef.current === 'started') {
       openCellWithObj(firstOpenedRef.current);
@@ -158,6 +190,7 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstOpened]);
 
+  // Обработка таймера отсчета времени игры
   useEffect(() => {
     if (status !== 'started') return;
 
@@ -168,9 +201,24 @@ function App() {
     return () => clearInterval(intervalId);
   }, [status, timeGame]);
 
+  // Логирование статуса игры
+  useEffect(() => {
+    console.log('status:', statusRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
+  // Логирование матрицы исходного игрового поля
+  useEffect(() => {
+    if (status === 'started') {
+      console.log('fieldMatrix:', fieldMatrixRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldMatrix]);
+
+  // Получение статуса ассистента
   const getStateForAssistant = () => {
     //console.log("getStateForAssistant: this.state:", state);
-    const state_ = {
+    const tempState = {
       itemselector: {
         items: state.notes.map(({ id, title }, index) => ({
           number: index + 1,
@@ -179,15 +227,18 @@ function App() {
         })),
       },
     };
-    //console.log("getStateForAssistant: state:", state);
-    return state_;
+    //console.log('getStateForAssistant - tempState:', tempState);
+    return tempState;
   };
 
+  // Обработка по событиям Сбер ассистента
   const dispatchAssistantAction = async (action) => {
-    console.log('dispatchAssistantAction', action);
+    console.log('dispatchAssistantAction:', action);
     if (action) {
       switch (action.type) {
+        // Установка цветовой палитры
         case 'theme_colors':
+          // TODO: Учесть е/ё ?,  ...
           if (action.note === 'тёмная') {
             setThemeColorsDark(true);
           } else if (action.note === 'светлая') {
@@ -195,51 +246,57 @@ function App() {
           }
           break;
 
+        // Смена уровней сложности
         case 'change_difficulty':
-          let temp_difficulty = '';
           switch (action.note) {
             case 'новичок':
-              temp_difficulty = 'beginner';
+              changeDifficulty('beginner');
               break;
+
             case 'любитель':
-              temp_difficulty = 'amateur';
+              changeDifficulty('amateur');
               break;
+
             case 'профи':
-              temp_difficulty = 'profi';
+              changeDifficulty('profi');
               break;
+
             default:
               break;
           }
-
-          if (temp_difficulty !== '') {
-            changeDifficulty(temp_difficulty);
-          }
           break;
 
+        // Новая игра
         case 'new_game':
           setStatusRestartGame();
           break;
 
+        // Открытие поля
         case 'open_field':
           openCellWithStr(action.note);
           break;
 
+        // Установка и снятие флага
         case 'toggle_flag':
           toggleFlag(action.note);
           break;
 
+        // Установка паузы
         case 'set_pause':
           setStatusPauseGame();
           break;
 
+        // Возобновление игры после паузы
         case 'continue_game':
           setStatusStartGame();
           break;
 
+        // Вызов помощи
         case 'call_help':
           setHelpActive(true);
           break;
 
+        // Закрытие помощи
         case 'close_help':
           setHelpActive(false);
           break;
@@ -250,39 +307,44 @@ function App() {
     }
   };
 
-  const changeDifficulty = (new_difficulty) => {
-    setDifficulty(new_difficulty);
+  // Изменение уровня игры
+  const changeDifficulty = (newDifficulty) => {
+    setDifficulty(newDifficulty);
     setStatusRestartGame();
   };
 
+  // Установка статуса при начале игры
   const setStatusStartGame = () => {
     setStatus('started');
   };
 
+  // Установка статуса при запуске новой игры
   const setStatusRestartGame = () => {
     if (statusRef.current !== 'new') {
       setStatus('new');
     }
   };
 
+  // Установка статуса при паузе
   const setStatusPauseGame = () => {
     if (statusRef.current === 'started') {
       setStatus('pause');
     }
   };
 
+  // Открыть поле и связанные поля, около которых нет мин
   const openCellWithObj = ({ y, x } = emptyfirstOpened()) => {
     if (y in openedCellsMatrixRef.current) {
       if (x in openedCellsMatrixRef.current[y]) {
         if (openedCellsMatrixRef.current[y][x] === 0) {
-          let lost_flag = false;
-          const temp_opened_cells_matrix = openedCellsMatrixRef.current;
-          temp_opened_cells_matrix[y][x] = 1;
-          setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+          let lostFlag = false;
+          const tempOpenedCellsMatrix = openedCellsMatrixRef.current;
+          tempOpenedCellsMatrix[y][x] = 1;
+          setOpenedCellsMatrix([...tempOpenedCellsMatrix]);
           --fieldNoOpenRef.current;
           if (fieldMatrixRef.current[y][x] === -1) {
             setStatus('lost');
-            lost_flag = true;
+            lostFlag = true;
           } else if (fieldMatrixRef.current[y][x] === 0) {
             for (let i = -1; i <= 1; i++) {
               for (let j = -1; j <= 1; j++) {
@@ -292,15 +354,15 @@ function App() {
               }
             }
           }
-          if (!lost_flag) {
-            let explored_cells_amount = 0;
+          if (!lostFlag) {
+            let exploredCellsAmount = 0;
             for (let row of openedCellsMatrixRef.current) {
-              explored_cells_amount += row.filter((cell) => cell === 1).length;
+              exploredCellsAmount += row.filter((cell) => cell === 1).length;
             }
             if (
-              explored_cells_amount ===
+              exploredCellsAmount ===
               fieldDataRef.current.y * fieldDataRef.current.x -
-                fieldDataRef.current.mines_count
+                fieldDataRef.current.minesCount
             ) {
               setStatus('won');
             }
@@ -310,6 +372,7 @@ function App() {
     }
   };
 
+  // Получение координат объекта (идентификаторов поля)
   const strToCoordinateObj = (y, x) => {
     x = LETTERS.indexOf(x.toUpperCase());
     y = Number(y);
@@ -324,17 +387,18 @@ function App() {
     }
   };
 
-  const openCellWithStr = (coord_str) => {
-    const x_raw = coord_str.charAt(0).toUpperCase();
-    const y_raw = coord_str.substr(1);
-    const cell_div = document.querySelector(
-      `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
+  // Открыть поле по заданным именованным координатам
+  const openCellWithStr = (coordStr) => {
+    const xRaw = coordStr.charAt(0).toUpperCase();
+    const yRaw = coordStr.substr(1);
+    const cellDiv = document.querySelector(
+      `.field__cell[data-y="${yRaw}"][data-x="${xRaw}"]`
     );
     let pos = null;
-    if (cell_div != null) {
-      pos = strToCoordinateObj(y_raw, x_raw);
+    if (cellDiv != null) {
+      pos = strToCoordinateObj(yRaw, xRaw);
     }
-    if (cell_div != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
+    if (cellDiv != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
       if (statusRef.current === 'started') {
         openCellWithObj(pos);
       } else if (
@@ -346,44 +410,46 @@ function App() {
     } else alert('Клетка с введёнными координатами не найдена!');
   };
 
-  const toggleFlag = (coord_str) => {
-    const x_raw = coord_str.charAt(0).toUpperCase();
-    const y_raw = coord_str.substr(1);
-    const cell_div = document.querySelector(
-      `.field__cell[data-y="${y_raw}"][data-x="${x_raw}"]`
+  // Установить флаг мины (новая версия для использования и в Сбер ассистенте)
+  const toggleFlag = (coordStr) => {
+    const xRaw = coordStr.charAt(0).toUpperCase();
+    const yRaw = coordStr.substr(1);
+    const cellDiv = document.querySelector(
+      `.field__cell[data-y="${yRaw}"][data-x="${xRaw}"]`
     );
     let pos = null;
-    if (cell_div != null) {
-      pos = strToCoordinateObj(y_raw, x_raw);
+    if (cellDiv != null) {
+      pos = strToCoordinateObj(yRaw, xRaw);
     }
-    if (cell_div != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
+    if (cellDiv != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
       if (pos.y in openedCellsMatrixRef.current) {
         if (pos.x in openedCellsMatrixRef.current[pos.y]) {
           if (
             openedCellsMatrixRef.current[pos.y][pos.x] !== 1 &&
             statusRef.current === 'started'
           ) {
-            const temp_opened_cells_matrix = openedCellsMatrixRef.current;
-            temp_opened_cells_matrix[pos.y][pos.x] =
-              temp_opened_cells_matrix[pos.y][pos.x] === -1 ? 0 : -1;
+            const tempOpenedCellsMatrix = openedCellsMatrixRef.current;
+            tempOpenedCellsMatrix[pos.y][pos.x] =
+              tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? 0 : -1;
             setFlagsCount(
               flagsCountRef.current +
-                (temp_opened_cells_matrix[pos.y][pos.x] === -1 ? -1 : 1)
+                (tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1)
             );
-            setOpenedCellsMatrix([...temp_opened_cells_matrix]);
+            setOpenedCellsMatrix([...tempOpenedCellsMatrix]);
             fieldNoOpenRef.current +=
-              temp_opened_cells_matrix[pos.y][pos.x] === -1 ? -1 : 1;
+              tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1;
           }
         }
       }
     } else alert('Клетка с введёнными координатами не найдена!');
   };
 
-  const randomMine = (field_data, opened) => {
+  // Сгененировать координаты новой мины
+  const randomMine = (fieldData, opened) => {
     while (true) {
       let mine = {
-        y: Math.floor(Math.random() * field_data.y),
-        x: Math.floor(Math.random() * field_data.x),
+        y: Math.floor(Math.random() * fieldData.y),
+        x: Math.floor(Math.random() * fieldData.x),
       };
       if (mine.y !== opened.y || mine.x !== opened.x) {
         return mine;
@@ -391,55 +457,54 @@ function App() {
     }
   };
 
-  const generateMines = (field_data, opened) => {
-    const mines_array = [];
-    for (let i = 0; i < field_data.mines_count; i++) {
+  // Сгененировать список координат мин для игрового поля
+  const generateMines = (fieldData, opened) => {
+    const minesArray = [];
+    for (let i = 0; i < fieldData.minesCount; i++) {
       while (true) {
-        const mine = randomMine(field_data, opened);
-        const index = mines_array.findIndex(
+        const mine = randomMine(fieldData, opened);
+        const index = minesArray.findIndex(
           (el) => el.x === mine.x && el.y === mine.y
         );
-        if (index === -1 && (mine.y !== opened.y || mine.x !== opened.x)) {
-          mines_array.push(mine);
+        if (index === -1) {
+          minesArray.push(mine);
           break;
         }
       }
     }
-    return mines_array;
+    return minesArray;
   };
 
-  const placeMine = (t_field_matrix, y, x) => {
-    t_field_matrix[y][x] = -1;
+  // Установка одной мины на игровое поле и количества рядом расположенных мин
+  const placeMine = (tempFieldMatrix, y, x) => {
+    tempFieldMatrix[y][x] = -1;
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
         if (
-          y + i in t_field_matrix &&
-          x + j in t_field_matrix[y + i] &&
-          t_field_matrix[y + i][x + j] !== -1
+          y + i in tempFieldMatrix &&
+          x + j in tempFieldMatrix[y + i] &&
+          tempFieldMatrix[y + i][x + j] !== -1
         ) {
-          t_field_matrix[y + i][x + j] += 1;
+          tempFieldMatrix[y + i][x + j] += 1;
         }
       }
     }
-    return t_field_matrix;
+    return tempFieldMatrix;
   };
 
+  // Установка всех мин на игровое поле
   const generateFieldMatrix = (field, mines) => {
-    let temp_field_matrix = [];
-    for (let i = 0; i < field.y; i++) {
-      temp_field_matrix.push([]);
-      for (let j = 0; j < field.x; j++) {
-        temp_field_matrix[i].push(0);
-      }
-    }
+    //console.log('mines:', mines);
+    let tempFieldMatrix = generateEmptyFieldMatrix(field);
 
     mines.forEach((mine) => {
-      temp_field_matrix = placeMine(temp_field_matrix, mine.y, mine.x);
+      tempFieldMatrix = placeMine(tempFieldMatrix, mine.y, mine.x);
     });
 
-    return temp_field_matrix;
+    return tempFieldMatrix;
   };
 
+  // Обновление поля и установка начальных статусов
   const newGame = (opened) => {
     if (statusRef.current === 'not_started' || statusRef.current === 'new') {
       setStatusStartGame();
@@ -454,7 +519,7 @@ function App() {
   };
 
   return (
-    <main className="app">
+    <main className="main-container">
       <DocumentStyle
         themeColorsDark={themeColorsDark}
         assistantCharacter={assistantCharacter}
@@ -463,17 +528,16 @@ function App() {
       <Controllers
         difficulty={difficulty}
         onChangeDifficulty={changeDifficulty}
-        onRestart={setStatusRestartGame}
-        onPauseGame={setStatusPauseGame}
-        onHelpActive={setHelpActive}
+        onSetStatusRestartGame={setStatusRestartGame}
+        onSetStatusPauseGame={setStatusPauseGame}
+        onSetHelpActive={setHelpActive}
       />
 
       <Statistics
-        status={status}
-        fieldNoOpen={fieldNoOpenRef.current}
+        fieldNoOpenRef={fieldNoOpenRef.current}
         fieldCount={fieldData.x * fieldData.y}
         flagsCount={flagsCount}
-        minesCount={fieldData.mines_count}
+        minesCount={fieldData.minesCount}
         timeGame={timeGame}
       />
 
@@ -484,16 +548,16 @@ function App() {
         fieldMatrix={fieldMatrix}
         openedCellsMatrix={openedCellsMatrix}
         LETTERS={LETTERS}
-        onRestartGame={setStatusRestartGame}
-        onStartGame={setStatusStartGame}
+        onSetStatusRestartGame={setStatusRestartGame}
+        onSetStatusStartGame={setStatusStartGame}
         onOpenCellWithStr={openCellWithStr}
         onToggleFlag={toggleFlag}
       />
 
       <Help
         active={helpActive}
-        setActive={setHelpActive}
         assistantAppealOfficial={assistantAppealOfficial}
+        onSetHelpActive={setHelpActive}
       />
     </main>
   );

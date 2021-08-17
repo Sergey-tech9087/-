@@ -6,9 +6,9 @@ import {
   lightSber,
   lightEva,
   lightJoy,
-  text,
-  background,
-  gradient,
+  text, // Цвет текста
+  background, // Цвет подложки
+  gradient, // Градиент
 } from '@sberdevices/plasma-tokens';
 
 const DocumentStyle = createGlobalStyle`
@@ -20,13 +20,13 @@ const DocumentStyle = createGlobalStyle`
     }
 `;
 
-const ThemeDarkSber = createGlobalStyle(darkSber);
-const ThemeDarkEva = createGlobalStyle(darkEva);
-const ThemeDarkJoy = createGlobalStyle(darkJoy);
+const ThemeStyleDarkSber = createGlobalStyle(darkSber);
+const ThemeStyleDarkEva = createGlobalStyle(darkEva);
+const ThemeStyleDarkJoy = createGlobalStyle(darkJoy);
 
-const ThemeLightSber = createGlobalStyle(lightSber);
-const ThemeLightEva = createGlobalStyle(lightEva);
-const ThemeLightJoy = createGlobalStyle(lightJoy);
+const ThemeStyleLightSber = createGlobalStyle(lightSber);
+const ThemeStyleLightEva = createGlobalStyle(lightEva);
+const ThemeStyleLightJoy = createGlobalStyle(lightJoy);
 
 export const GlobalStyle = ({ themeColorsDark, assistantCharacter }) => (
   <>
@@ -34,11 +34,23 @@ export const GlobalStyle = ({ themeColorsDark, assistantCharacter }) => (
     {(() => {
       switch (assistantCharacter) {
         case 'sber':
-          return themeColorsDark ? <ThemeDarkSber /> : <ThemeLightSber />;
+          return themeColorsDark ? (
+            <ThemeStyleDarkSber />
+          ) : (
+            <ThemeStyleLightSber />
+          );
         case 'eva':
-          return themeColorsDark ? <ThemeDarkEva /> : <ThemeLightEva />;
+          return themeColorsDark ? (
+            <ThemeStyleDarkEva />
+          ) : (
+            <ThemeStyleLightEva />
+          );
         case 'joy':
-          return themeColorsDark ? <ThemeDarkJoy /> : <ThemeLightJoy />;
+          return themeColorsDark ? (
+            <ThemeStyleDarkJoy />
+          ) : (
+            <ThemeStyleLightJoy />
+          );
         default:
           return;
       }
