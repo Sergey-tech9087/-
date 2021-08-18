@@ -2,6 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import useStateRef from 'react-usestateref';
 
+import { store } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
+import 'animate.css/animate.min.css';
+
 import {
   createSmartappDebugger,
   createAssistant,
@@ -17,8 +21,8 @@ import './App.css';
 
 // Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
-  //if (process.env.NODE_ENV === 'production') {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -202,22 +206,21 @@ function App() {
   }, [status, timeGame]);
 
   // Логирование статуса игры
-  useEffect(() => {
-    console.log('status:', statusRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  //useEffect(() => {
+  //console.log('status:', statusRef.current);
+  //// eslint-disable-next-line react-hooks/exhaustive-deps
+  //}, [status]);
 
   // Логирование матрицы исходного игрового поля
-  useEffect(() => {
-    if (status === 'started') {
-      console.log('fieldMatrix:', fieldMatrixRef.current);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldMatrix]);
+  // useEffect(() => {
+  //   if (status === 'started') {
+  //     console.log('fieldMatrix:', fieldMatrixRef.current);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [fieldMatrix]);
 
   // Получение статуса ассистента
   const getStateForAssistant = () => {
-    //console.log("getStateForAssistant: this.state:", state);
     const tempState = {
       itemselector: {
         items: state.notes.map(({ id, title }, index) => ({
@@ -227,7 +230,6 @@ function App() {
         })),
       },
     };
-    //console.log('getStateForAssistant - tempState:', tempState);
     return tempState;
   };
 
@@ -332,6 +334,23 @@ function App() {
     }
   };
 
+  // Вывод информационных сообщений
+  const messageNotification = (title, message, type = 'info') => {
+    store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: 'top',
+      container: 'top-right',
+      animationIn: ['animate__animated', 'animate__fadeIn'],
+      animationOut: ['animate__animated', 'animate__fadeOut'],
+      dismiss: {
+        duration: 3000,
+        onScreen: true,
+      },
+    });
+  };
+
   // Открыть поле и связанные поля, около которых нет мин
   const openCellWithObj = ({ y, x } = emptyfirstOpened()) => {
     if (y in openedCellsMatrixRef.current) {
@@ -382,7 +401,7 @@ function App() {
         x: x,
       };
     } else {
-      alert('Ошибка парсинга координатной строки');
+      messageNotification('Игровое поле', 'Ошибка получения координат строки!');
       return emptyfirstOpened();
     }
   };
@@ -400,17 +419,34 @@ function App() {
     }
     if (cellDiv != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
       if (statusRef.current === 'started') {
-        openCellWithObj(pos);
+        if (openedCellsMatrixRef.current[pos.y][pos.x] === 0) {
+          openCellWithObj(pos);
+        } else if (openedCellsMatrixRef.current[pos.y][pos.x] === 1) {
+          messageNotification(
+            'Открытие клетки поля',
+            `Клетка ${coordStr.toUpperCase()} уже открыта!`
+          );
+        } else if (openedCellsMatrixRef.current[pos.y][pos.x] === -1) {
+          messageNotification(
+            'Открытие клетки поля',
+            `На клетке ${coordStr.toUpperCase()} уже установлен флаг!`
+          );
+        }
       } else if (
         statusRef.current === 'not_started' ||
         statusRef.current === 'new'
       ) {
         newGame(pos);
       }
-    } else alert('Клетка с введёнными координатами не найдена!');
+    } else {
+      messageNotification(
+        'Открытие клетки поля',
+        'Клетка с введёнными координатами не найдена!'
+      );
+    }
   };
 
-  // Установить флаг мины (новая версия для использования и в Сбер ассистенте)
+  // Установить флаг мины
   const toggleFlag = (coordStr) => {
     const xRaw = coordStr.charAt(0).toUpperCase();
     const yRaw = coordStr.substr(1);
@@ -424,24 +460,33 @@ function App() {
     if (cellDiv != null && pos != null && pos.x !== 'err' && pos.y !== 'err') {
       if (pos.y in openedCellsMatrixRef.current) {
         if (pos.x in openedCellsMatrixRef.current[pos.y]) {
-          if (
-            openedCellsMatrixRef.current[pos.y][pos.x] !== 1 &&
-            statusRef.current === 'started'
-          ) {
-            const tempOpenedCellsMatrix = openedCellsMatrixRef.current;
-            tempOpenedCellsMatrix[pos.y][pos.x] =
-              tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? 0 : -1;
-            setFlagsCount(
-              flagsCountRef.current +
-                (tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1)
-            );
-            setOpenedCellsMatrix([...tempOpenedCellsMatrix]);
-            fieldNoOpenRef.current +=
-              tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1;
+          if (statusRef.current === 'started') {
+            if (openedCellsMatrixRef.current[pos.y][pos.x] !== 1) {
+              const tempOpenedCellsMatrix = openedCellsMatrixRef.current;
+              tempOpenedCellsMatrix[pos.y][pos.x] =
+                tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? 0 : -1;
+              setFlagsCount(
+                flagsCountRef.current +
+                  (tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1)
+              );
+              setOpenedCellsMatrix([...tempOpenedCellsMatrix]);
+              fieldNoOpenRef.current +=
+                tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1;
+            } else if (openedCellsMatrixRef.current[pos.y][pos.x] === 1) {
+              messageNotification(
+                'Установка/снятие флага',
+                `Клетка ${coordStr.toUpperCase()} уже открыта!`
+              );
+            }
           }
         }
       }
-    } else alert('Клетка с введёнными координатами не найдена!');
+    } else {
+      messageNotification(
+        'Установка/снятие флага',
+        'Клетка с введёнными координатами не найдена!'
+      );
+    }
   };
 
   // Сгененировать координаты новой мины
@@ -552,6 +597,7 @@ function App() {
         onSetStatusStartGame={setStatusStartGame}
         onOpenCellWithStr={openCellWithStr}
         onToggleFlag={toggleFlag}
+        onMessageNotification={messageNotification}
       />
 
       <Help

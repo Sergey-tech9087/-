@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import './Field.css';
 import FieldCell from '../FieldCell/FieldCell';
@@ -15,7 +15,19 @@ const Field = ({
   onSetStatusStartGame: setStatusStartGame,
   onOpenCellWithStr: openCellWithStr,
   onToggleFlag: toggleFlag,
+  onMessageNotification: messageNotification,
 }) => {
+  useEffect(() => {
+    if (status === 'won') {
+      messageNotification('Завершение игры', 'Победа!', 'success');
+    } else if (status === 'lost') {
+      messageNotification('Завершение игры', 'Поражение!', 'danger');
+    } else if (status === 'pause') {
+      messageNotification('Пауза', 'Игра приостановлена!', 'warning');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
   // Генерация ячеек игрового поля
   const generateFieldDivs = (fieldSize) => {
     const fieldDivs = [];
@@ -60,19 +72,13 @@ const Field = ({
               (status === 'won' ? ' field__poster_win' : ' field__poster_lose')
             }
             onClick={setStatusRestartGame}
-          >
-            <span className="field__poster-text">
-              {status === 'won' ? 'Победа!' : 'Проиграл!'}
-            </span>
-          </div>
+          ></div>
         ) : null}
         {status === 'pause' ? (
           <div
             className={'field__poster field__poster_pause'}
             onClick={setStatusStartGame}
-          >
-            <span className="field__poster-text">{'Пауза!'}</span>
-          </div>
+          ></div>
         ) : null}
         {generateFieldDivs(fieldData)}
       </div>
