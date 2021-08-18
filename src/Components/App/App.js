@@ -259,7 +259,7 @@ function App() {
               changeDifficulty('amateur');
               break;
 
-            case 'профи':
+            case 'профессионал':
               changeDifficulty('profi');
               break;
 

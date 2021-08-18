@@ -15,29 +15,28 @@ const Help = ({
     if (assistantAppealOfficial) {
       dictAppeal = {
         word01: 'Вы',
-        word02: 'Вас',
-        word03: 'Вам',
-        word04: 'скажите',
-        word05: 'выполните',
-        word06: 'установите',
+        word02: 'Вам',
+        word03: 'скажите',
+        word04: 'можете',
+        word05: 'назовите',
       };
     } else {
       dictAppeal = {
         word01: 'ты',
-        word02: 'тебя',
-        word03: 'тебе',
-        word04: 'скажи',
-        word05: 'выполни',
-        word06: 'установи',
+        word02: 'тебе',
+        word03: 'скажи',
+        word04: 'можешь',
+        word05: 'назови',
       };
     }
     let tempText = '';
-    tempText = `Lorem ${dictAppeal.word01} ipsum ${dictAppeal.word02} dolor ${dictAppeal.word03} 
-      sit ${dictAppeal.word04} amet, ${dictAppeal.word05} consectetur ${dictAppeal.word06} 
-      adipiscing elit. Sed vehicula ullamcorper ligula, at tincidunt magna euismod in. Integer in
-      fringilla nulla. Curabitur in efficitur enim, eu varius erat. Maecenas vel ante nibh. 
-      Vivamus nulla lacus, rutrum non interdum quis, imperdiet quis purus. Fusce lobortis commodo 
-      felis. Fusce auctor augue non neque luctus, et hendrerit arcu porta.`;
+    tempText = `Цель игры Профессиональный сапёр – открыть все пустые ячейки, не попадая при этом ни на одну мину. 
+    Чтобы открыть ячейку ${dictAppeal.word02} необходимо сказать "открыть" и назвать координаты ячейки, например, А1.
+    Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word03} "флаг" и ${dictAppeal.word05} координаты ячейки, например, Б2.
+    Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word04} сказать "пауза", а для возобновления игры "продолжить". 
+    Начать новую игру ${dictAppeal.word04} по команде "снова" или "заново". Уровень игры меняется командой "сложность" с указанием
+    одного из вариантов "Новичок", "Любитель" или "Профессионал". Правила игры вызываются командой "помощь", а закрываются словом "закрыть".
+    `;
     return tempText;
   };
 

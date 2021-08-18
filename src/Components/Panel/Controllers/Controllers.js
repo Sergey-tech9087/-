@@ -42,7 +42,7 @@ const Controllers = ({
         <div className="radio">
           <Radiobox
             name="Difficulty"
-            label="Профи"
+            label="Профессионал"
             value="profi"
             checked={difficulty === 'profi' ? true : false}
             onChange={(e) => {
