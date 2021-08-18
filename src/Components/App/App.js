@@ -352,10 +352,13 @@ function App() {
   };
 
   // Открыть поле и связанные поля, около которых нет мин
-  const openCellWithObj = ({ y, x } = emptyfirstOpened()) => {
+  const openCellWithObj = ({ y, x, autoOpen = false } = emptyfirstOpened()) => {
     if (y in openedCellsMatrixRef.current) {
       if (x in openedCellsMatrixRef.current[y]) {
-        if (openedCellsMatrixRef.current[y][x] === 0) {
+        if (
+          openedCellsMatrixRef.current[y][x] === 0 ||
+          (autoOpen && openedCellsMatrixRef.current[y][x] === -1)
+        ) {
           let lostFlag = false;
           const tempOpenedCellsMatrix = openedCellsMatrixRef.current;
           tempOpenedCellsMatrix[y][x] = 1;
@@ -368,7 +371,7 @@ function App() {
             for (let i = -1; i <= 1; i++) {
               for (let j = -1; j <= 1; j++) {
                 if (i !== 0 || j !== 0) {
-                  openCellWithObj({ y: y + i, x: x + j });
+                  openCellWithObj({ y: y + i, x: x + j, autoOpen: true });
                 }
               }
             }
