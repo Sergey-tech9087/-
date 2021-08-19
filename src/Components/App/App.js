@@ -275,12 +275,12 @@ function App() {
 
         // Открытие поля
         case 'open_field':
-          openCellWithStr(action.note);
+          openCellWithStr(action.note1 + action.note2);
           break;
 
         // Установка и снятие флага
         case 'toggle_flag':
-          toggleFlag(action.note);
+          toggleFlag(action.note1 + action.note2);
           break;
 
         // Установка паузы
