@@ -1,22 +1,8 @@
 .field__cell {
-  background-color: rgb(134, 78, 78);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.field__cell_exploded {
-  background-color: tomato;
-  background-image: url('../../Assets/Bomb.svg');
-}
-
-.field__cell_discovered {
-  background-color: #b37b7b;
-}
-
-.field__cell_flagged {
-  background-image: url('../../Assets/FlagWhite.svg');
 }

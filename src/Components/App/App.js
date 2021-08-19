@@ -404,7 +404,11 @@ function App() {
         x: x,
       };
     } else {
-      messageNotification('Игровое поле', 'Ошибка получения координат строки!');
+      messageNotification(
+        'Игровое поле',
+        'Ошибка получения координат строки!',
+        'warning'
+      );
       return emptyfirstOpened();
     }
   };
@@ -444,7 +448,8 @@ function App() {
     } else {
       messageNotification(
         'Открытие клетки поля',
-        'Клетка с введёнными координатами не найдена!'
+        'Клетка с введёнными координатами не найдена!',
+        'warning'
       );
     }
   };
@@ -487,7 +492,8 @@ function App() {
     } else {
       messageNotification(
         'Установка/снятие флага',
-        'Клетка с введёнными координатами не найдена!'
+        'Клетка с введёнными координатами не найдена!',
+        'warning'
       );
     }
   };
@@ -590,6 +596,7 @@ function App() {
       />
 
       <Field
+        assistantCharacter={assistantCharacter}
         difficulty={difficulty}
         status={status}
         fieldData={fieldData}
@@ -605,6 +612,8 @@ function App() {
 
       <Help
         active={helpActive}
+        themeColorsDark={themeColorsDark}
+        assistantCharacter={assistantCharacter}
         assistantAppealOfficial={assistantAppealOfficial}
         onSetHelpActive={setHelpActive}
       />

@@ -5,6 +5,7 @@ import FieldCell from '../FieldCell/FieldCell';
 //import flag from '../../Assets/flag_white.svg';
 
 const Field = ({
+  assistantCharacter,
   difficulty,
   status,
   fieldData,
@@ -48,6 +49,7 @@ const Field = ({
       for (let j = 0; j < fieldSize.x; j++) {
         fieldDivs.push(
           <FieldCell
+            assistantCharacter={assistantCharacter}
             key={LETTERS[j] + i}
             keyStr={LETTERS[j] + i}
             pressed={openedCellsMatrix[i - 1][j] === 1}

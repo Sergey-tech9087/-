@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+import FlagWhite from '../../Assets/FlagWhite.svg';
+import Bomb from '../../Assets/Bomb.svg';
+
 import './FieldCell.css';
 
 const FieldCell = ({
+  assistantCharacter,
   keyStr,
   pressed,
   flagged,
@@ -30,14 +34,40 @@ const FieldCell = ({
     toggleFlag(keyStr);
   };
 
-  const extraClassOpened =
-    value === -1 ? ' field__cell_exploded' : ' field__cell_discovered';
+  const extraClassStyle = () => {
+    let tempClassStyle = {
+      backgroundColor: null,
+      backgroundImage: null,
+    };
+
+    if (!isPressed) {
+      tempClassStyle.backgroundColor =
+        assistantCharacter === 'sber'
+          ? 'rgb(33, 160, 56, 0.5)'
+          : assistantCharacter === 'eva'
+          ? 'rgb(7, 140, 228, 0.5)'
+          : 'rgb(181, 89, 243, 0.5)';
+    } else if (value !== -1) {
+      tempClassStyle.backgroundColor =
+        assistantCharacter === 'sber'
+          ? '#21A038'
+          : assistantCharacter === 'eva'
+          ? '#078CE4'
+          : '#B559F3';
+    } else {
+      tempClassStyle.backgroundColor = 'tomato';
+      tempClassStyle.backgroundImage = `url(${Bomb})`;
+    }
+
+    if (isFlagged) tempClassStyle.backgroundImage = `url(${FlagWhite})`;
+
+    return tempClassStyle;
+  };
+
   return (
     <div
-      className={
-        'field__cell' +
-        (isPressed ? extraClassOpened : isFlagged ? ' field__cell_flagged' : '')
-      }
+      className={'field__cell'}
+      style={extraClassStyle()}
       onClick={thisPress}
       onContextMenu={(e) => thisRightClick(e)}
       data-x={keyStr.charAt(0)}

@@ -6,6 +6,8 @@ import './Help.css';
 
 const Help = ({
   active,
+  themeColorsDark,
+  assistantCharacter,
   assistantAppealOfficial,
   onSetHelpActive: setHelpActive,
 }) => {
@@ -35,10 +37,22 @@ const Help = ({
     Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word03} "флаг" и ${dictAppeal.word05} координаты ячейки, например, Б2.
     Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word04} сказать "пауза", а для возобновления игры "продолжить". 
     Начать новую игру ${dictAppeal.word04} по команде "снова" или "заново". Уровень игры меняется командой "сложность" с указанием
-    одного из вариантов "Новичок", "Любитель" или "Профессионал". Правила игры вызываются командой "помощь", а закрываются словом "закрыть".
-    `;
+    одного из вариантов "новичок", "любитель" или "профессионал". 
+    Правила игры вызываются командой "помощь", а закрываются словом "закрыть".`;
     return tempText;
   };
+
+  const extraClassStyle = themeColorsDark
+    ? assistantCharacter === 'sber'
+      ? { backgroundColor: 'rgb(33, 160, 56, 0.5)' }
+      : assistantCharacter === 'eva'
+      ? { backgroundColor: 'rgb(7, 140, 228, 0.5)' }
+      : { backgroundColor: 'rgb(181, 89, 243, 0.5)' }
+    : assistantCharacter === 'sber'
+    ? { backgroundColor: 'rgb(190 239 199)' }
+    : assistantCharacter === 'eva'
+    ? { backgroundColor: 'rgb(127 195 240)' }
+    : { backgroundColor: 'rgb(213 164 246)' };
 
   return (
     <div
@@ -47,6 +61,7 @@ const Help = ({
     >
       <div
         className={active ? 'modal__content active' : 'modal__content'}
+        style={extraClassStyle}
         onClick={(e) => e.stopPropagation()}
       >
         <CardHeadline2 className="main-word" style={{ fontSize: '150%' }}>
@@ -54,8 +69,8 @@ const Help = ({
         </CardHeadline2>
         <CardParagraph2
           className="paragraph"
-          style={{ fontSize: '90%' }}
-          lines={10}
+          style={{ fontSize: '100%' }}
+          lines={30}
         >
           {helpText()}
         </CardParagraph2>
