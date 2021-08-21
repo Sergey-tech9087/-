@@ -21,8 +21,8 @@ import './App.css';
 
 // Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === 'production') {
-    //if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -130,7 +130,7 @@ function App() {
   );
 
   // Состояние вывода правил игры
-  const [helpActive, setHelpActive] = useState(false);
+  const [helpActive, setHelpActive, helpActiveRef] = useStateRef(false);
 
   // Таймер отсчета времени (секундомер)
   const [timeGame, setTimeGame] = useState(0);
@@ -140,6 +140,7 @@ function App() {
     assistantRef.current = initializeAssistant(() => getStateForAssistant());
     assistantRef.current.on('start', (event) => {
       console.log(`assistantRef.on(start) - event:`, event);
+      //assistantRef.current.sendData({ action: { action_id: 'saStart' } });
     });
 
     assistantRef.current.on(
@@ -212,12 +213,12 @@ function App() {
   //}, [status]);
 
   // Логирование матрицы исходного игрового поля
-  // useEffect(() => {
-  //   if (status === 'started') {
-  //     console.log('fieldMatrix:', fieldMatrixRef.current);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [fieldMatrix]);
+  useEffect(() => {
+    if (status === 'started') {
+      console.log('fieldMatrix:', fieldMatrixRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldMatrix]);
 
   // Получение статуса ассистента
   const getStateForAssistant = () => {
@@ -295,12 +296,22 @@ function App() {
 
         // Вызов помощи
         case 'call_help':
-          setHelpActive(true);
+          //setHelpActive(true);
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saHelp',
+              parameters: {
+                text: `${helpText()}`,
+              },
+            },
+          });
           break;
 
         // Закрытие помощи
         case 'close_help':
-          setHelpActive(false);
+          if (helpActiveRef.current) {
+            setHelpActive(false);
+          }
           break;
 
         default:
@@ -318,12 +329,14 @@ function App() {
   // Установка статуса при начале игры
   const setStatusStartGame = () => {
     setStatus('started');
+    assistantRef.current.sendData({ action: { action_id: 'saStarted' } });
   };
 
   // Установка статуса при запуске новой игры
   const setStatusRestartGame = () => {
     if (statusRef.current !== 'new') {
       setStatus('new');
+      assistantRef.current.sendData({ action: { action_id: 'saNew' } });
     }
   };
 
@@ -331,7 +344,32 @@ function App() {
   const setStatusPauseGame = () => {
     if (statusRef.current === 'started') {
       setStatus('pause');
+      assistantRef.current.sendData({ action: { action_id: 'saPause' } });
     }
+  };
+
+  const setStatusLoseGame = () => {
+    setStatus('lost');
+    assistantRef.current.sendData({
+      action: {
+        action_id: 'saLost',
+        parameters: {
+          text: `${fieldNoOpenRef.current}`,
+        },
+      },
+    });
+  };
+
+  const setStatusWinGame = () => {
+    setStatus('won');
+    assistantRef.current.sendData({
+      action: {
+        action_id: 'saWon',
+        parameters: {
+          text: `${toHHMMSS(timeGame)}`,
+        },
+      },
+    });
   };
 
   // Вывод информационных сообщений
@@ -365,7 +403,7 @@ function App() {
           setOpenedCellsMatrix([...tempOpenedCellsMatrix]);
           --fieldNoOpenRef.current;
           if (fieldMatrixRef.current[y][x] === -1) {
-            setStatus('lost');
+            setStatusLoseGame();
             lostFlag = true;
           } else if (fieldMatrixRef.current[y][x] === 0) {
             for (let i = -1; i <= 1; i++) {
@@ -386,7 +424,7 @@ function App() {
               fieldDataRef.current.y * fieldDataRef.current.x -
                 fieldDataRef.current.minesCount
             ) {
-              setStatus('won');
+              setStatusWinGame();
             }
           }
         }
@@ -572,6 +610,51 @@ function App() {
     }
   };
 
+  // Перевод времени
+  const toHHMMSS = (secs) => {
+    let secNum = parseInt(secs, 10);
+    let hours = Math.floor(secNum / 3600);
+    let minutes = Math.floor(secNum / 60) % 60;
+    let seconds = secNum % 60;
+
+    return [hours, minutes, seconds]
+      .map((v) => (v < 10 ? '0' + v : v))
+      .filter((v, i) => v !== '00' || i > 0)
+      .join(':');
+  };
+
+  // Словарь формы обращения персонажа
+  const helpText = () => {
+    let dictAppeal = null;
+    if (assistantAppealOfficial) {
+      dictAppeal = {
+        word01: 'Вы',
+        word02: 'Вам',
+        word03: 'скажите',
+        word04: 'можете',
+        word05: 'назовите',
+      };
+    } else {
+      dictAppeal = {
+        word01: 'ты',
+        word02: 'тебе',
+        word03: 'скажи',
+        word04: 'можешь',
+        word05: 'назови',
+      };
+    }
+    let tempText = '';
+    tempText = `Цель игры Профессиональный сапёр – открыть все пустые ячейки, не попадая при этом ни на одну мину. 
+    Чтобы открыть ячейку ${dictAppeal.word02} необходимо сказать «открыть» и назвать координаты ячейки, например, А1.
+    Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word03} «флаг» и ${dictAppeal.word05} координаты ячейки, например, Б2.
+    Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word04} сказать «пауза», а для возобновления игры «продолжить». 
+    Начать новую игру ${dictAppeal.word04} по команде «снова» или «заново». Уровень игры меняется командой «сложность» с указанием
+    одного из вариантов «новичок», «любитель» или «профессионал». 
+    Правила игры вызываются командой «помощь», а закрываются словом «закрыть».
+    Переключение цветовой темы происходит по команде «тема» и слову «светлая» или «темная».`;
+    return tempText;
+  };
+
   return (
     <main className="main-container">
       <DocumentStyle
@@ -580,11 +663,13 @@ function App() {
       />
 
       <Controllers
+        assistantRef={assistantRef}
         difficulty={difficulty}
         onChangeDifficulty={changeDifficulty}
         onSetStatusRestartGame={setStatusRestartGame}
         onSetStatusPauseGame={setStatusPauseGame}
         onSetHelpActive={setHelpActive}
+        onHelpText={helpText}
       />
 
       <Statistics
@@ -593,6 +678,7 @@ function App() {
         flagsCount={flagsCount}
         minesCount={fieldData.minesCount}
         timeGame={timeGame}
+        onToHHMMSS={toHHMMSS}
       />
 
       <Field
@@ -613,9 +699,10 @@ function App() {
       <Help
         active={helpActive}
         themeColorsDark={themeColorsDark}
+        assistantRef={assistantRef}
         assistantCharacter={assistantCharacter}
-        assistantAppealOfficial={assistantAppealOfficial}
         onSetHelpActive={setHelpActive}
+        onHelpText={helpText}
       />
     </main>
   );

@@ -5,11 +5,13 @@ import { Button, Radiobox } from '@sberdevices/plasma-ui';
 import './Controllers.css';
 
 const Controllers = ({
+  assistantRef,
   difficulty,
   onChangeDifficulty: changeDifficulty,
   onSetStatusRestartGame: setStatusRestartGame,
   onSetStatusPauseGame: setStatusPauseGame,
   onSetHelpActive: setHelpActive,
+  onHelpText: helpText,
 }) => {
   return (
     <div className="controller-container">
@@ -80,6 +82,14 @@ const Controllers = ({
           size="s"
           onClick={() => {
             setHelpActive(true);
+            assistantRef.current.sendData({
+              action: {
+                action_id: 'saHelp',
+                parameters: {
+                  text: ``,
+                },
+              },
+            });
           }}
         >
           Правила

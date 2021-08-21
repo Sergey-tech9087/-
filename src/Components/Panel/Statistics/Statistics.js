@@ -12,20 +12,8 @@ const Statistics = ({
   flagsCount,
   minesCount,
   timeGame,
+  onToHHMMSS: toHHMMSS,
 }) => {
-  // Перевод времени
-  const toHHMMSS = (secs) => {
-    let secNum = parseInt(secs, 10);
-    let hours = Math.floor(secNum / 3600);
-    let minutes = Math.floor(secNum / 60) % 60;
-    let seconds = secNum % 60;
-
-    return [hours, minutes, seconds]
-      .map((v) => (v < 10 ? '0' + v : v))
-      .filter((v, i) => v !== '00' || i > 0)
-      .join(':');
-  };
-
   return (
     <div className="statistics-container">
       <IconApps />
