@@ -21,8 +21,8 @@ import './App.css';
 
 // Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
-  //if (process.env.NODE_ENV === 'production') {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -92,7 +92,10 @@ function App() {
   const [assistantCharacter, setAssistantCharacter] = useState('sber');
 
   // Форма обращения персонажа
-  const [assistantAppealOfficial, setassistantAppealOfficial] = useState(true);
+  const [assistantAppealOfficial, setAssistantAppealOfficial] = useState(true);
+
+  // Пол персонажа
+  const [assistantGender, setAssistantGender] = useState('male');
 
   // Уровни сложности игры
   const [difficulty, setDifficulty, difficultyRef] = useStateRef('beginner');
@@ -130,7 +133,7 @@ function App() {
   );
 
   // Состояние вывода правил игры
-  const [helpActive, setHelpActive, helpActiveRef] = useStateRef(false);
+  const [helpActive, setHelpActive, helpActiveRef] = useStateRef('close');
 
   // Таймер отсчета времени (секундомер)
   const [timeGame, setTimeGame] = useState(0);
@@ -140,7 +143,14 @@ function App() {
     assistantRef.current = initializeAssistant(() => getStateForAssistant());
     assistantRef.current.on('start', (event) => {
       console.log(`assistantRef.on(start) - event:`, event);
-      //assistantRef.current.sendData({ action: { action_id: 'saStart' } });
+      assistantRef.current.sendData({
+        action: {
+          action_id: 'saStartGame',
+          parameters: {
+            message: `${startMessage()}`,
+          },
+        },
+      });
     });
 
     assistantRef.current.on(
@@ -150,16 +160,17 @@ function App() {
         switch (event.type) {
           case 'character':
             setAssistantCharacter(event.character.id);
-            if (event.character.id === 'sber' || event.character.id === 'eva') {
-              setassistantAppealOfficial(true);
+            if (event.character.id === 'sber') {
+              setAssistantAppealOfficial(true);
+              setAssistantGender('male');
+            } else if (event.character.id === 'eva') {
+              setAssistantAppealOfficial(true);
+              setAssistantGender('female');
             } else if (event.character.id === 'joy') {
-              setassistantAppealOfficial(false);
+              setAssistantAppealOfficial(false);
+              setAssistantGender('female');
             }
             break;
-
-          // TODO: Сделать закрытие приложения или не надо ???
-          // case 'close_app':
-          // break;
 
           default:
             break;
@@ -207,12 +218,13 @@ function App() {
   }, [status, timeGame]);
 
   // Логирование статуса игры
-  //useEffect(() => {
-  //console.log('status:', statusRef.current);
-  //// eslint-disable-next-line react-hooks/exhaustive-deps
-  //}, [status]);
+  useEffect(() => {
+    console.log('status:', statusRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   // Логирование матрицы исходного игрового поля
+  // ! Отключить перед модерацией
   useEffect(() => {
     if (status === 'started') {
       console.log('fieldMatrix:', fieldMatrixRef.current);
@@ -296,7 +308,7 @@ function App() {
 
         // Вызов помощи
         case 'call_help':
-          //setHelpActive(true);
+          setHelpActive('open_sa');
           assistantRef.current.sendData({
             action: {
               action_id: 'saHelp',
@@ -310,8 +322,45 @@ function App() {
         // Закрытие помощи
         case 'close_help':
           if (helpActiveRef.current) {
-            setHelpActive(false);
+            setHelpActive('close');
           }
+          break;
+
+        // Отправка статуса для помощи в ассистента
+        case 'load_status_for_help':
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saStatusForHelp',
+              parameters: {
+                status: `${statusRef.current}`,
+                helpActive: `${helpActiveRef.current}`,
+              },
+            },
+          });
+          break;
+
+        // Отправка статуса для паузы в ассистента
+        case 'load_status_for_pause':
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saStatusForPause',
+              parameters: {
+                status: `${statusRef.current}`,
+              },
+            },
+          });
+          break;
+
+        // Отправка активности помощи в ассистента
+        case 'load_active_help':
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saActiveHelp',
+              parameters: {
+                helpActive: `${helpActiveRef.current}`,
+              },
+            },
+          });
           break;
 
         default:
@@ -344,10 +393,10 @@ function App() {
   const setStatusPauseGame = () => {
     if (statusRef.current === 'started') {
       setStatus('pause');
-      assistantRef.current.sendData({ action: { action_id: 'saPause' } });
     }
   };
 
+  // Установка статуса проигрыша
   const setStatusLoseGame = () => {
     setStatus('lost');
     assistantRef.current.sendData({
@@ -360,13 +409,14 @@ function App() {
     });
   };
 
+  // Установка статуса выигрыша
   const setStatusWinGame = () => {
     setStatus('won');
     assistantRef.current.sendData({
       action: {
         action_id: 'saWon',
         parameters: {
-          text: `${toHHMMSS(timeGame)}`,
+          text: `${toHHMMSS(timeGame, true)}`,
         },
       },
     });
@@ -442,11 +492,20 @@ function App() {
         x: x,
       };
     } else {
-      messageNotification(
-        'Игровое поле',
-        'Ошибка получения координат строки!',
-        'warning'
-      );
+      // messageNotification(
+      //   'Игровое поле',
+      //   'Ошибка получения координат строки!',
+      //   'warning'
+      // );
+      assistantRef.current.sendData({
+        action: {
+          action_id: 'saFieldMessage',
+          parameters: {
+            text: `Ошибка получения координат строки!`,
+          },
+        },
+      });
+
       return emptyfirstOpened();
     }
   };
@@ -467,15 +526,31 @@ function App() {
         if (openedCellsMatrixRef.current[pos.y][pos.x] === 0) {
           openCellWithObj(pos);
         } else if (openedCellsMatrixRef.current[pos.y][pos.x] === 1) {
-          messageNotification(
-            'Открытие клетки поля',
-            `Клетка ${coordStr.toUpperCase()} уже открыта!`
-          );
+          // messageNotification(
+          //   'Открытие клетки поля',
+          //   `Клетка ${coordStr.toUpperCase()} уже открыта!`
+          // );
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saFieldMessage',
+              parameters: {
+                text: `Клетка ${coordStr.toUpperCase()} уже открыта!`,
+              },
+            },
+          });
         } else if (openedCellsMatrixRef.current[pos.y][pos.x] === -1) {
-          messageNotification(
-            'Открытие клетки поля',
-            `На клетке ${coordStr.toUpperCase()} уже установлен флаг!`
-          );
+          // messageNotification(
+          //   'Открытие клетки поля',
+          //   `На клетке ${coordStr.toUpperCase()} уже установлен флаг!`
+          // );
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saFieldMessage',
+              parameters: {
+                text: `На клетке ${coordStr.toUpperCase()} уже установлен флаг!`,
+              },
+            },
+          });
         }
       } else if (
         statusRef.current === 'not_started' ||
@@ -484,11 +559,19 @@ function App() {
         newGame(pos);
       }
     } else {
-      messageNotification(
-        'Открытие клетки поля',
-        'Клетка с введёнными координатами не найдена!',
-        'warning'
-      );
+      // messageNotification(
+      //   'Открытие клетки поля',
+      //   'Клетка с введёнными координатами не найдена!',
+      //   'warning'
+      // );
+      assistantRef.current.sendData({
+        action: {
+          action_id: 'saFieldMessage',
+          parameters: {
+            text: `Клетка с введёнными координатами не найдена!`,
+          },
+        },
+      });
     }
   };
 
@@ -519,20 +602,36 @@ function App() {
               fieldNoOpenRef.current +=
                 tempOpenedCellsMatrix[pos.y][pos.x] === -1 ? -1 : 1;
             } else if (openedCellsMatrixRef.current[pos.y][pos.x] === 1) {
-              messageNotification(
-                'Установка/снятие флага',
-                `Клетка ${coordStr.toUpperCase()} уже открыта!`
-              );
+              // messageNotification(
+              //   'Установка/снятие флага',
+              //   `Клетка ${coordStr.toUpperCase()} уже открыта!`
+              // );
+              assistantRef.current.sendData({
+                action: {
+                  action_id: 'saFieldMessage',
+                  parameters: {
+                    text: `Клетка ${coordStr.toUpperCase()} уже открыта!`,
+                  },
+                },
+              });
             }
           }
         }
       }
     } else {
-      messageNotification(
-        'Установка/снятие флага',
-        'Клетка с введёнными координатами не найдена!',
-        'warning'
-      );
+      // messageNotification(
+      //   'Установка/снятие флага',
+      //   'Клетка с введёнными координатами не найдена!',
+      //   'warning'
+      // );
+      assistantRef.current.sendData({
+        action: {
+          action_id: 'saFieldMessage',
+          parameters: {
+            text: `Клетка с введёнными координатами не найдена!`,
+          },
+        },
+      });
     }
   };
 
@@ -611,46 +710,93 @@ function App() {
   };
 
   // Перевод времени
-  const toHHMMSS = (secs) => {
+  const toHHMMSS = (secs, isHour = false) => {
     let secNum = parseInt(secs, 10);
     let hours = Math.floor(secNum / 3600);
     let minutes = Math.floor(secNum / 60) % 60;
     let seconds = secNum % 60;
 
-    return [hours, minutes, seconds]
-      .map((v) => (v < 10 ? '0' + v : v))
-      .filter((v, i) => v !== '00' || i > 0)
-      .join(':');
+    let tempTime;
+
+    if (isHour) {
+      tempTime = [hours, minutes, seconds]
+        .map((v) => (v < 10 ? '0' + v : v))
+        .join(':');
+    } else {
+      tempTime = [hours, minutes, seconds]
+        .map((v) => (v < 10 ? '0' + v : v))
+        .filter((v, i) => v !== '00' || i > 0)
+        .join(':');
+    }
+
+    return tempTime;
   };
 
-  // Словарь формы обращения персонажа
-  const helpText = () => {
+  // Словарь официальных и неофициальных слов
+  const wordAppeal = () => {
     let dictAppeal = null;
+
     if (assistantAppealOfficial) {
       dictAppeal = {
         word01: 'Вы',
         word02: 'Вам',
-        word03: 'скажите',
-        word04: 'можете',
-        word05: 'назовите',
+        word03: 'Вам',
+        word04: 'скажите',
+        word05: 'можете',
+        word06: 'назовите',
       };
     } else {
       dictAppeal = {
         word01: 'ты',
         word02: 'тебе',
-        word03: 'скажи',
-        word04: 'можешь',
-        word05: 'назови',
+        word03: 'Тебе',
+        word04: 'скажи',
+        word05: 'можешь',
+        word06: 'назови',
       };
     }
+
+    return dictAppeal;
+  };
+
+  // Словарь слов зависыщий от пола ассистента
+  const wordGender = () => {
+    let dictGender = null;
+
+    if (assistantGender === 'male') {
+      dictGender = {
+        word01: 'прочитал',
+      };
+    } else if (assistantGender === 'female') {
+      dictGender = {
+        word01: 'прочитала',
+      };
+    }
+
+    return dictGender;
+  };
+
+  // Сообщение привествие
+  const startMessage = () => {
+    let dictAppeal = wordAppeal();
+    let dictGender = wordGender();
     let tempText = '';
+
+    tempText = `Добро пожаловать в занимательную игру профессиональный сапёр! ${dictAppeal.word03} предстоит разминировать игровое поле. Чтобы я ${dictGender.word01} правила, ${dictAppeal.word04} «правила».`;
+    return tempText;
+  };
+
+  // Словарь формы обращения персонажа
+  const helpText = () => {
+    let dictAppeal = wordAppeal();
+    let tempText = '';
+
     tempText = `Цель игры Профессиональный сапёр – открыть все пустые ячейки, не попадая при этом ни на одну мину. 
     Чтобы открыть ячейку ${dictAppeal.word02} необходимо сказать «открыть» и назвать координаты ячейки, например, А1.
-    Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word03} «флаг» и ${dictAppeal.word05} координаты ячейки, например, Б2.
-    Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word04} сказать «пауза», а для возобновления игры «продолжить». 
-    Начать новую игру ${dictAppeal.word04} по команде «снова» или «заново». Уровень игры меняется командой «сложность» с указанием
+    Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word04} «флаг» и ${dictAppeal.word06} координаты ячейки, например, Б2.
+    Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word05} сказать «пауза», а для возобновления игры «продолжить». 
+    Начать новую игру ${dictAppeal.word05} по команде «снова» или «заново». Уровень игры меняется командой «сложность» с указанием
     одного из вариантов «новичок», «любитель» или «профессионал». 
-    Правила игры вызываются командой «помощь», а закрываются словом «закрыть».
     Переключение цветовой темы происходит по команде «тема» и слову «светлая» или «темная».`;
     return tempText;
   };
@@ -664,12 +810,12 @@ function App() {
 
       <Controllers
         assistantRef={assistantRef}
+        status={status}
         difficulty={difficulty}
         onChangeDifficulty={changeDifficulty}
         onSetStatusRestartGame={setStatusRestartGame}
         onSetStatusPauseGame={setStatusPauseGame}
         onSetHelpActive={setHelpActive}
-        onHelpText={helpText}
       />
 
       <Statistics
@@ -697,7 +843,7 @@ function App() {
       />
 
       <Help
-        active={helpActive}
+        helpActive={helpActive}
         themeColorsDark={themeColorsDark}
         assistantRef={assistantRef}
         assistantCharacter={assistantCharacter}

@@ -6,12 +6,12 @@ import './Controllers.css';
 
 const Controllers = ({
   assistantRef,
+  status,
   difficulty,
   onChangeDifficulty: changeDifficulty,
   onSetStatusRestartGame: setStatusRestartGame,
   onSetStatusPauseGame: setStatusPauseGame,
   onSetHelpActive: setHelpActive,
-  onHelpText: helpText,
 }) => {
   return (
     <div className="controller-container">
@@ -25,6 +25,9 @@ const Controllers = ({
             checked={difficulty === 'beginner' ? true : false}
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
+              assistantRef.current.sendData({
+                action: { action_id: 'saDifLow' },
+              });
             }}
           />
         </div>
@@ -37,6 +40,9 @@ const Controllers = ({
             checked={difficulty === 'amateur' ? true : false}
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
+              assistantRef.current.sendData({
+                action: { action_id: 'saDifMid' },
+              });
             }}
           />
         </div>
@@ -49,6 +55,9 @@ const Controllers = ({
             checked={difficulty === 'profi' ? true : false}
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
+              assistantRef.current.sendData({
+                action: { action_id: 'saDifHigh' },
+              });
             }}
           />
         </div>
@@ -58,6 +67,9 @@ const Controllers = ({
         <Button
           view="primary"
           size="s"
+          disabled={
+            !(status === 'started' || status === 'pause') ? true : false
+          }
           onClick={() => {
             setStatusRestartGame();
           }}
@@ -69,8 +81,10 @@ const Controllers = ({
           className="btn"
           view="primary"
           size="s"
+          disabled={status !== 'started' ? true : false}
           onClick={() => {
             setStatusPauseGame();
+            assistantRef.current.sendData({ action: { action_id: 'saPause' } });
           }}
         >
           Пауза
@@ -80,8 +94,9 @@ const Controllers = ({
           className="btn"
           view="primary"
           size="s"
+          disabled={status === 'started' ? true : false}
           onClick={() => {
-            setHelpActive(true);
+            setHelpActive('open_app');
             assistantRef.current.sendData({
               action: {
                 action_id: 'saHelp',

@@ -5,7 +5,7 @@ import { Button, CardHeadline2, CardParagraph2 } from '@sberdevices/plasma-ui';
 import './Help.css';
 
 const Help = ({
-  active,
+  helpActive,
   themeColorsDark,
   assistantRef,
   assistantCharacter,
@@ -26,11 +26,11 @@ const Help = ({
 
   return (
     <div
-      className={active ? 'modal active' : 'modal'}
-      onClick={() => setHelpActive(false)}
+      className={helpActive === 'open_app' ? 'modal active' : 'modal'}
+      onClick={() => setHelpActive('close')}
     >
       <div
-        className={active ? 'modal__content active' : 'modal__content'}
+        className={helpActive === 'open_app' ? 'modal__content active' : 'modal__content'}
         style={extraClassStyle}
         onClick={(e) => e.stopPropagation()}
       >
@@ -49,9 +49,14 @@ const Help = ({
           className="btn-close"
           view="primary"
           onClick={() => {
-            setHelpActive(false);
+            setHelpActive('close');
             assistantRef.current.sendData({
-              action: { action_id: 'saCloseHelp' },
+              action: {
+                action_id: 'saCloseHelp',
+                parameters: {
+                  helpActive: `${helpActive}`,
+                },
+              },
             });
           }}
         >
