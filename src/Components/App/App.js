@@ -17,8 +17,6 @@ import Statistics from '../Panel/Statistics/Statistics';
 import Field from '../Field/Field';
 import Help from '../Panel/Controllers/Help/Help';
 
-import './App.css';
-
 // Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
   //if (process.env.NODE_ENV === 'production') {
@@ -807,7 +805,7 @@ function App() {
   };
 
   return (
-    <main className="main-container">
+    <main>
       <DocumentStyle
         themeColorsDark={themeColorsDark}
         assistantCharacter={assistantCharacter}

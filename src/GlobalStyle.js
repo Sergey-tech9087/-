@@ -18,6 +18,13 @@ const DocumentStyle = createGlobalStyle`
       background-image: ${gradient};
       min-height: 100vh;
     }
+    @media screen and (max-width: 1080px) and (max-height: 1920px) {      
+      html:root {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
 `;
 
 const ThemeStyleDarkSber = createGlobalStyle(darkSber);
@@ -30,7 +37,7 @@ const ThemeStyleLightJoy = createGlobalStyle(lightJoy);
 
 export const GlobalStyle = ({ themeColorsDark, assistantCharacter }) => (
   <>
-    <DocumentStyle />
+    <DocumentStyle className="main" />
     {(() => {
       switch (assistantCharacter) {
         case 'sber':

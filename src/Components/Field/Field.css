@@ -9,23 +9,29 @@
 
 .field {
   display: grid;
-  gap: 5px;
-  grid-auto-rows: 30px;
   position: relative;
   width: fit-content;
   margin: 1rem 1.5rem 1rem 0;
 }
 
 .field_beginner {
-  grid-template-columns: repeat(9, 30px);
+  font-size: 225%;
+  gap: 5px;
+  grid-auto-rows: 80px;
+  grid-template-columns: repeat(9, 80px);
 }
 
 .field_amateur {
-  grid-template-columns: repeat(16, 30px);
+  font-size: 125%;
+  gap: 3px;
+  grid-auto-rows: 44.5px;
+  grid-template-columns: repeat(16, 44.5px);
 }
 
 .field_profi {
-  grid-template-columns: repeat(21, 30px);
+  gap: 2px;
+  grid-auto-rows: 34px;
+  grid-template-columns: repeat(21, 34px);
 }
 
 .field__poster {
@@ -66,14 +72,70 @@
   padding-right: 5px;
 }
 
-@media (max-width: 1040px) {
-  .main {
-    flex-wrap: wrap;
+@media screen and (max-width: 1920px) and (max-height: 1080px) {
+  .field_beginner {
+    font-size: 225%;
+    gap: 4px;
+    grid-auto-rows: 81px;
+    grid-template-columns: repeat(9, 81px);
+  }
+
+  .field_amateur {
+    font-size: 125%;
+    gap: 3px;
+    grid-auto-rows: 44.5px;
+    grid-template-columns: repeat(16, 44.5px);
+  }
+
+  .field_profi {
+    gap: 2px;
+    grid-auto-rows: 34px;
+    grid-template-columns: repeat(21, 34px);
   }
 }
 
-@media (max-width: 809px) {
-  .field {
-    margin: 0 auto;
+@media screen and (max-width: 1280px) and (max-height: 800px) {
+  .field_beginner {
+    font-size: 150%;
+    gap: 3px;
+    grid-auto-rows: 50px;
+    grid-template-columns: repeat(9, 50px);
+  }
+
+  .field_amateur {
+    font-size: 90%;
+    gap: 2px;
+    grid-auto-rows: 28px;
+    grid-template-columns: repeat(16, 28px);
+  }
+
+  .field_profi {
+    font-size: 70%;
+    gap: 2px;
+    grid-auto-rows: 21px;
+    grid-template-columns: repeat(21, 21px);
+  }
+}
+
+@media screen and (max-width: 1080px) and (max-height: 1920px) {
+  .field_beginner {
+    /* font-size: 250%; */
+    gap: 5px;
+    grid-auto-rows: 100px;
+    grid-template-columns: repeat(9, 100px);
+  }
+
+  .field_amateur {
+    font-size: 175%;
+    gap: 3px;
+    grid-auto-rows: 60px;
+    grid-template-columns: repeat(16, 60px);
+  }
+
+  .field_profi {
+    font-size: 150%;
+    gap: 2px;
+    grid-auto-rows: 45px;
+    grid-template-columns: repeat(21, 45px);
   }
 }
