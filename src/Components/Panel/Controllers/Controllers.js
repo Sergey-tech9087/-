@@ -22,6 +22,9 @@ const Controllers = ({
             name="Difficulty"
             label="Новичок"
             value="beginner"
+            disabled={
+              status !== 'not_started' && status !== 'new' ? true : false
+            }
             checked={difficulty === 'beginner' ? true : false}
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
@@ -37,6 +40,9 @@ const Controllers = ({
             name="Difficulty"
             label="Любитель"
             value="amateur"
+            disabled={
+              status !== 'not_started' && status !== 'new' ? true : false
+            }
             checked={difficulty === 'amateur' ? true : false}
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
@@ -52,6 +58,9 @@ const Controllers = ({
             name="Difficulty"
             label="Профессионал"
             value="profi"
+            disabled={
+              status !== 'not_started' && status !== 'new' ? true : false
+            }
             checked={difficulty === 'profi' ? true : false}
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
@@ -68,7 +77,14 @@ const Controllers = ({
           view="primary"
           size="s"
           disabled={
-            !(status === 'started' || status === 'pause') ? true : false
+            !(
+              status === 'started' ||
+              status === 'pause' ||
+              status === 'lost' ||
+              status === 'won'
+            )
+              ? true
+              : false
           }
           onClick={() => {
             setStatusRestartGame();

@@ -56,7 +56,7 @@
 
 .field__poster_pause {
   background-color: rgba(247, 243, 34, 0.3);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(9px);
 }
 
 .field__letters {
@@ -128,8 +128,8 @@
   .field_amateur {
     font-size: 175%;
     gap: 3px;
-    grid-auto-rows: 60px;
-    grid-template-columns: repeat(16, 60px);
+    grid-auto-rows: 57px;
+    grid-template-columns: repeat(16, 57px);
   }
 
   .field_profi {

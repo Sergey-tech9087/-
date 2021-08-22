@@ -19,8 +19,8 @@ import Help from '../Panel/Controllers/Help/Help';
 
 // Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
-  //if (process.env.NODE_ENV === 'production') {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
