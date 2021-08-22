@@ -21,8 +21,8 @@ import './App.css';
 
 // Инициализация Сбер ассистента
 const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === 'production') {
-    //if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -92,10 +92,15 @@ function App() {
   const [assistantCharacter, setAssistantCharacter] = useState('sber');
 
   // Форма обращения персонажа
-  const [assistantAppealOfficial, setAssistantAppealOfficial] = useState(true);
+  const [
+    assistantAppealOfficial,
+    setAssistantAppealOfficial,
+    assistantAppealOfficialRef,
+  ] = useStateRef(true);
 
   // Пол персонажа
-  const [assistantGender, setAssistantGender] = useState('male');
+  const [assistantGender, setAssistantGender, assistantGenderRef] =
+    useStateRef('male');
 
   // Уровни сложности игры
   const [difficulty, setDifficulty, difficultyRef] = useStateRef('beginner');
@@ -736,7 +741,7 @@ function App() {
   const wordAppeal = () => {
     let dictAppeal = null;
 
-    if (assistantAppealOfficial) {
+    if (assistantAppealOfficialRef.current) {
       dictAppeal = {
         word01: 'Вы',
         word02: 'Вам',
@@ -763,11 +768,11 @@ function App() {
   const wordGender = () => {
     let dictGender = null;
 
-    if (assistantGender === 'male') {
+    if (assistantGenderRef.current === 'male') {
       dictGender = {
         word01: 'прочитал',
       };
-    } else if (assistantGender === 'female') {
+    } else if (assistantGenderRef.current === 'female') {
       dictGender = {
         word01: 'прочитала',
       };
@@ -782,7 +787,7 @@ function App() {
     let dictGender = wordGender();
     let tempText = '';
 
-    tempText = `Добро пожаловать в занимательную игру профессиональный сапёр! ${dictAppeal.word03} предстоит разминировать игровое поле. Чтобы я ${dictGender.word01} правила, ${dictAppeal.word04} «правила».`;
+    tempText = `Добро пожаловать в занимательную игру Профессиональный сапёр! ${dictAppeal.word03} предстоит разминировать игровое поле. Чтобы я ${dictGender.word01} правила, ${dictAppeal.word04} «правила».`;
     return tempText;
   };
 
@@ -797,7 +802,7 @@ function App() {
     Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word05} сказать «пауза», а для возобновления игры «продолжить». 
     Начать новую игру ${dictAppeal.word05} по команде «снова» или «заново». Уровень игры меняется командой «сложность» с указанием
     одного из вариантов «новичок», «любитель» или «профессионал». 
-    Переключение цветовой темы происходит по команде «тема» и слову «светлая» или «темная».`;
+    Переключение цветовой темы происходит по команде «тема» и слову «светлая» или «тёмная».`;
     return tempText;
   };
 
