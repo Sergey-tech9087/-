@@ -91,12 +91,14 @@ function App() {
 
   // Форма обращения персонажа
   const [
+    // eslint-disable-next-line no-unused-vars
     assistantAppealOfficial,
     setAssistantAppealOfficial,
     assistantAppealOfficialRef,
   ] = useStateRef(true);
 
   // Пол персонажа
+  // eslint-disable-next-line no-unused-vars
   const [assistantGender, setAssistantGender, assistantGenderRef] =
     useStateRef('male');
 
@@ -227,13 +229,13 @@ function App() {
   }, [status]);
 
   // Логирование матрицы исходного игрового поля
-  // ! Отключить перед модерацией
-  useEffect(() => {
-    if (status === 'started') {
-      console.log('fieldMatrix:', fieldMatrixRef.current);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldMatrix]);
+  // // ! Отключить перед модерацией
+  // useEffect(() => {
+  //   if (status === 'started') {
+  //     console.log('fieldMatrix:', fieldMatrixRef.current);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [fieldMatrix]);
 
   // Получение статуса ассистента
   const getStateForAssistant = () => {
@@ -266,6 +268,9 @@ function App() {
 
         // Смена уровней сложности
         case 'change_difficulty':
+          if (helpActiveRef.current) {
+            setHelpActive(false);
+          }
           switch (action.note) {
             case 'новичок':
               changeDifficulty('beginner');
@@ -291,6 +296,9 @@ function App() {
 
         // Открытие поля
         case 'open_field':
+          if (helpActiveRef.current) {
+            setHelpActive(false);
+          }
           openCellWithStr(action.note1 + action.note2);
           break;
 
@@ -354,6 +362,19 @@ function App() {
           });
           break;
 
+        // Отправка статуса для уровня в ассистента
+        case 'load_status_for_diff':
+          assistantRef.current.sendData({
+            action: {
+              action_id: 'saStatusForDiff',
+              parameters: {
+                status: `${statusRef.current}`,
+                diff: `${action.note}`,
+              },
+            },
+          });
+          break;
+
         // Отправка активности помощи в ассистента
         case 'load_active_help':
           assistantRef.current.sendData({
@@ -387,8 +408,10 @@ function App() {
   // Установка статуса при запуске новой игры
   const setStatusRestartGame = () => {
     if (statusRef.current !== 'new') {
+      if (statusRef.current !== 'not_started') {
+        assistantRef.current.sendData({ action: { action_id: 'saNew' } });
+      }
       setStatus('new');
-      assistantRef.current.sendData({ action: { action_id: 'saNew' } });
     }
   };
 
@@ -743,19 +766,17 @@ function App() {
       dictAppeal = {
         word01: 'Вы',
         word02: 'Вам',
-        word03: 'Вам',
-        word04: 'скажите',
-        word05: 'можете',
-        word06: 'назовите',
+        word03: 'скажите',
+        word04: 'можете',
+        word05: 'назовите',
       };
     } else {
       dictAppeal = {
         word01: 'ты',
         word02: 'тебе',
-        word03: 'Тебе',
-        word04: 'скажи',
-        word05: 'можешь',
-        word06: 'назови',
+        word03: 'скажи',
+        word04: 'можешь',
+        word05: 'назови',
       };
     }
 
@@ -785,7 +806,7 @@ function App() {
     let dictGender = wordGender();
     let tempText = '';
 
-    tempText = `Добро пожаловать в занимательную игру Профессиональный сапёр! ${dictAppeal.word03} предстоит разминировать игровое поле. Чтобы я ${dictGender.word01} правила, ${dictAppeal.word04} «правила».`;
+    tempText = `Добро пожаловать в занимательную игру Профессиональный сапёр! В ней ${dictAppeal.word02} предстоит разминировать игровое поле. Чтобы я ${dictGender.word01} правила, ${dictAppeal.word03} «правила».`;
     return tempText;
   };
 
@@ -796,9 +817,9 @@ function App() {
 
     tempText = `Цель игры Профессиональный сапёр – открыть все пустые ячейки, не попадая при этом ни на одну мину. 
     Чтобы открыть ячейку ${dictAppeal.word02} необходимо сказать «открыть» и назвать координаты ячейки, например, А1.
-    Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word04} «флаг» и ${dictAppeal.word06} координаты ячейки, например, Б2.
-    Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word05} сказать «пауза», а для возобновления игры «продолжить». 
-    Начать новую игру ${dictAppeal.word05} по команде «снова» или «заново». Уровень игры меняется командой «сложность» с указанием
+    Для того чтобы отметить клетку с предполагаемой миной ${dictAppeal.word03} «флаг» и ${dictAppeal.word05} координаты ячейки, например, Б2.
+    Чтобы приостановить игру ${dictAppeal.word01} ${dictAppeal.word04} сказать «пауза», а для возобновления игры «продолжить». 
+    Начать новую игру ${dictAppeal.word04} по команде «снова» или «заново». Уровень игры меняется командой «сложность» с указанием
     одного из вариантов «новичок», «любитель» или «профессионал». 
     Переключение цветовой темы происходит по команде «тема» и слову «светлая» или «тёмная».`;
     return tempText;

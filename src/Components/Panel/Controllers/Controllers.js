@@ -29,7 +29,13 @@ const Controllers = ({
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
               assistantRef.current.sendData({
-                action: { action_id: 'saDifLow' },
+                action: {
+                  action_id: 'saStatusForDiff',
+                  parameters: {
+                    status: `${status}`,
+                    diff: `новичок`,
+                  },
+                },
               });
             }}
           />
@@ -47,7 +53,13 @@ const Controllers = ({
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
               assistantRef.current.sendData({
-                action: { action_id: 'saDifMid' },
+                action: {
+                  action_id: 'saStatusForDiff',
+                  parameters: {
+                    status: `${status}`,
+                    diff: `любитель`,
+                  },
+                },
               });
             }}
           />
@@ -65,7 +77,13 @@ const Controllers = ({
             onChange={(e) => {
               changeDifficulty(e.currentTarget.value);
               assistantRef.current.sendData({
-                action: { action_id: 'saDifHigh' },
+                action: {
+                  action_id: 'saStatusForDiff',
+                  parameters: {
+                    status: `${status}`,
+                    diff: `профессионал`,
+                  },
+                },
               });
             }}
           />
