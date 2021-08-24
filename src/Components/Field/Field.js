@@ -65,7 +65,7 @@ const Field = ({
   };
 
   return (
-    <main className="main">
+    <div className="main">
       <div className={'field field_' + difficulty}>
         {status === 'won' || status === 'lost' ? (
           <div
@@ -84,7 +84,7 @@ const Field = ({
         ) : null}
         {generateFieldDivs(fieldData)}
       </div>
-    </main>
+    </div>
   );
 };
 

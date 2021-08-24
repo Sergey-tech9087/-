@@ -1,7 +1,6 @@
 .main {
   display: flex;
   justify-content: center;
-  font-family: Arial, sans-serif;
   align-items: flex-start;
   margin-right: 20px;
   margin-block-end: 150px;
@@ -15,23 +14,24 @@
 }
 
 .field_beginner {
-  font-size: 225%;
-  gap: 5px;
-  grid-auto-rows: 80px;
-  grid-template-columns: repeat(9, 80px);
+  font-size: 200%;
+  gap: 4px;
+  grid-auto-rows: 78px;
+  grid-template-columns: repeat(9, 78px);
 }
 
 .field_amateur {
-  font-size: 125%;
+  font-size: 120%;
   gap: 3px;
-  grid-auto-rows: 44.5px;
-  grid-template-columns: repeat(16, 44.5px);
+  grid-auto-rows: 43px;
+  grid-template-columns: repeat(16, 43px);
 }
 
 .field_profi {
+  font-size: 100%;
   gap: 2px;
-  grid-auto-rows: 34px;
-  grid-template-columns: repeat(21, 34px);
+  grid-auto-rows: 33px;
+  grid-template-columns: repeat(21, 33px);
 }
 
 .field__poster {
@@ -73,69 +73,128 @@
 }
 
 @media screen and (max-width: 1920px) and (max-height: 1080px) {
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
   .field_beginner {
-    font-size: 225%;
+    font-size: 200%;
     gap: 4px;
-    grid-auto-rows: 81px;
-    grid-template-columns: repeat(9, 81px);
+    grid-auto-rows: 78px;
+    grid-template-columns: repeat(9, 78px);
   }
 
   .field_amateur {
-    font-size: 125%;
+    font-size: 120%;
     gap: 3px;
-    grid-auto-rows: 44.5px;
-    grid-template-columns: repeat(16, 44.5px);
+    grid-auto-rows: 43px;
+    grid-template-columns: repeat(16, 43px);
   }
 
   .field_profi {
+    font-size: 100%;
     gap: 2px;
-    grid-auto-rows: 34px;
-    grid-template-columns: repeat(21, 34px);
+    grid-auto-rows: 33px;
+    grid-template-columns: repeat(21, 33px);
   }
 }
 
 @media screen and (max-width: 1280px) and (max-height: 800px) {
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
   .field_beginner {
-    font-size: 150%;
+    font-size: 130%;
     gap: 3px;
-    grid-auto-rows: 50px;
-    grid-template-columns: repeat(9, 50px);
+    grid-auto-rows: 48px;
+    grid-template-columns: repeat(9, 48px);
   }
 
   .field_amateur {
-    font-size: 90%;
+    font-size: 80%;
     gap: 2px;
-    grid-auto-rows: 28px;
-    grid-template-columns: repeat(16, 28px);
+    grid-auto-rows: 27px;
+    grid-template-columns: repeat(16, 27px);
   }
 
   .field_profi {
     font-size: 70%;
-    gap: 2px;
+    gap: 1px;
     grid-auto-rows: 21px;
     grid-template-columns: repeat(21, 21px);
   }
 }
 
+/* Для мобильных устройств */
 @media screen and (max-width: 1080px) and (max-height: 1920px) {
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
   .field_beginner {
-    /* font-size: 250%; */
+    font-size: 200%;
     gap: 5px;
-    grid-auto-rows: 100px;
-    grid-template-columns: repeat(9, 100px);
+    grid-auto-rows: 90px;
+    grid-template-columns: repeat(9, 90px);
   }
 
   .field_amateur {
-    font-size: 175%;
+    font-size: 150%;
     gap: 3px;
-    grid-auto-rows: 57px;
-    grid-template-columns: repeat(16, 57px);
+    grid-auto-rows: 55px;
+    grid-template-columns: repeat(16, 55px);
   }
 
   .field_profi {
-    font-size: 150%;
+    font-size: 125%;
     gap: 2px;
-    grid-auto-rows: 45px;
-    grid-template-columns: repeat(21, 45px);
+    grid-auto-rows: 43px;
+    grid-template-columns: repeat(21, 43px);
+  }
+}
+
+/* Для экранов с шириной менее 1080 */
+@media screen and (max-width: 1079px) {
+  .main {
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+  }
+
+  .field_beginner {
+    font-size: 100%;
+    gap: 2px;
+    grid-auto-rows: 38px;
+    grid-template-columns: repeat(9, 38px);
+  }
+
+  .field_amateur {
+    font-size: 100%;
+    gap: 2px;
+    grid-auto-rows: 38px;
+    grid-template-columns: repeat(16, 38px);
+  }
+
+  .field_profi {
+    font-size: 100%;
+    gap: 2px;
+    grid-auto-rows: 38px;
+    grid-template-columns: repeat(21, 38px);
+  }
+}
+
+/* Для экранов с шириной более 1920 */
+@media screen and (min-width: 1921px) {
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
   }
 }

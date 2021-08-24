@@ -5,7 +5,6 @@ import { IconApps, IconClock, IconWarning } from '@sberdevices/plasma-icons';
 
 import './Statistics.css';
 
-// TODO: Исключить вывод статуса (status - в параметрах и его вывод)
 const Statistics = ({
   fieldNoOpenRef,
   fieldCount,
@@ -16,14 +15,26 @@ const Statistics = ({
 }) => {
   return (
     <div className="statistics-container">
-      <IconApps />
-      <Badge text={`${fieldNoOpenRef} / ${fieldCount}`} size="l" />
+      <div>
+        <div className="icon">
+          <IconApps />
+        </div>
+        <Badge text={`${fieldNoOpenRef} / ${fieldCount}`} size="l" />
+      </div>
 
-      <IconWarning className="icon-warning" />
-      <Badge text={`${flagsCount} / ${minesCount}`} size="l" />
+      <div>
+        <div className="icon">
+          <IconWarning className="icon-margin" />
+        </div>
+        <Badge text={`${flagsCount} / ${minesCount}`} size="l" />
+      </div>
 
-      <IconClock className="icon-clock" />
-      <Badge text={toHHMMSS(timeGame)} size="l" />
+      <div>
+        <div className="icon">
+          <IconClock className="icon-margin" />
+        </div>
+        <Badge text={toHHMMSS(timeGame)} size="l" />
+      </div>
     </div>
   );
 };

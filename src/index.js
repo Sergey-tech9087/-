@@ -3,17 +3,15 @@ import ReactDOM from 'react-dom';
 
 import ReactNotification from 'react-notifications-component';
 
-// Тема оформления (цветовая схема)
-import { GlobalStyle } from './GlobalStyle';
+import { DeviceThemeProvider } from '@sberdevices/plasma-ui';
 
 import App from './Components/App/App';
 import './index.css';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <GlobalStyle />
+  <DeviceThemeProvider>
     <ReactNotification />
     <App />
-  </React.StrictMode>,
+  </DeviceThemeProvider>,
   document.getElementById('root')
 );

@@ -12,11 +12,16 @@
 }
 
 .radio {
-  margin-left: 10px;
+  display: inline;
+  float: left;
+}
+
+.radio-margin-left {
+  margin-left: 20px;
 }
 
 .btn-group {
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
 }

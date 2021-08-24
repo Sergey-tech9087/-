@@ -6,17 +6,11 @@
   margin-top: 20px;
 }
 
-.icon-warning {
-  margin-left: 20px;
-  display: inline-block;
+.icon {
+  display: inline;
+  float: left;
 }
 
-.icon-clock {
+.icon-margin {
   margin-left: 20px;
-  display: inline-block;
-}
-
-.status {
-  margin-left: 20px;
-  display: inline-block;
 }
