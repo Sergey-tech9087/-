@@ -134,7 +134,7 @@
 @media screen and (max-width: 1080px) and (max-height: 1920px) {
   .main {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: flex-start;
   }
 
