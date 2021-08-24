@@ -29,3 +29,13 @@
 .btn {
   margin-left: 20px;
 }
+
+@media screen and (max-width: 559px) {
+  .radio-margin-left {
+    margin-left: 10px;
+  }
+
+  .btn {
+    margin-left: 10px;
+  }
+}
