@@ -18,9 +18,10 @@ import Field from '../Field/Field';
 import Help from '../Panel/Controllers/Help/Help';
 
 // Инициализация Сбер ассистента
+// ! Отключить перед модерацией
 const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === 'production') {
-    //if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -223,10 +224,11 @@ function App() {
   }, [status, timeGame]);
 
   // Логирование статуса игры
-  useEffect(() => {
-    console.log('status:', statusRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  // ! Отключить перед модерацией
+  // useEffect(() => {
+  //   console.log('status:', statusRef.current);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [status]);
 
   // Логирование матрицы исходного игрового поля
   // // ! Отключить перед модерацией
@@ -258,8 +260,7 @@ function App() {
       switch (action.type) {
         // Установка цветовой палитры
         case 'theme_colors':
-          // TODO: Учесть е/ё ?,  ...
-          if (action.note === 'тёмная') {
+          if (action.note === 'темная') {
             setThemeColorsDark(true);
           } else if (action.note === 'светлая') {
             setThemeColorsDark(false);
