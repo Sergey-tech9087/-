@@ -161,7 +161,7 @@
 }
 
 /* Для экранов с шириной менее 1080 */
-@media screen and (max-width: 1079px) {
+@media screen and (max-width: 559px) {
   .main {
     display: flex;
     justify-content: left;
