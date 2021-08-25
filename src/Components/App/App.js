@@ -149,38 +149,27 @@ function App() {
     assistantRef.current = initializeAssistant(() => getStateForAssistant());
     assistantRef.current.on('start', (event) => {
       console.log(`assistantRef.on(start) - event:`, event);
-      assistantRef.current.sendData({
-        action: {
-          action_id: 'saStartGame',
-          parameters: {
-            message: `${startMessage()}`,
-          },
-        },
-      });
+      assistantRef.current.sendData({ action: { action_id: 'saStartGame' } });
     });
 
     assistantRef.current.on(
       'data',
       (event) => {
         console.log('assistantRef.on(data) - event:', event);
-        switch (event.type) {
-          case 'character':
-            setAssistantCharacter(event.character.id);
-            if (event.character.id === 'sber') {
-              setAssistantAppealOfficial(true);
-              setAssistantGender('male');
-            } else if (event.character.id === 'eva') {
-              setAssistantAppealOfficial(true);
-              setAssistantGender('female');
-            } else if (event.character.id === 'joy') {
-              setAssistantAppealOfficial(false);
-              setAssistantGender('female');
-            }
-            break;
-
-          default:
-            break;
+        if (event.type === 'character') {
+          setAssistantCharacter(event.character.id);
+          if (event.character.id === 'sber') {
+            setAssistantAppealOfficial(true);
+            setAssistantGender('male');
+          } else if (event.character.id === 'eva') {
+            setAssistantAppealOfficial(true);
+            setAssistantGender('female');
+          } else if (event.character.id === 'joy') {
+            setAssistantAppealOfficial(false);
+            setAssistantGender('female');
+          }
         }
+
         const { action } = event;
         dispatchAssistantAction(action);
       },
@@ -785,33 +774,6 @@ function App() {
     }
 
     return dictAppeal;
-  };
-
-  // Словарь слов зависыщий от пола ассистента
-  const wordGender = () => {
-    let dictGender = null;
-
-    if (assistantGenderRef.current === 'male') {
-      dictGender = {
-        word01: 'прочитал',
-      };
-    } else if (assistantGenderRef.current === 'female') {
-      dictGender = {
-        word01: 'прочитала',
-      };
-    }
-
-    return dictGender;
-  };
-
-  // Сообщение привествие
-  const startMessage = () => {
-    let dictAppeal = wordAppeal();
-    let dictGender = wordGender();
-    let tempText = '';
-
-    tempText = `Добро пожаловать в занимательную игру Профессиональный сапёр! В ней ${dictAppeal.word02} предстоит разминировать игровое поле. Чтобы я ${dictGender.word01} правила, ${dictAppeal.word03} «правила».`;
-    return tempText;
   };
 
   // Словарь формы обращения персонажа
