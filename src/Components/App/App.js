@@ -21,7 +21,7 @@ import Help from '../Panel/Controllers/Help/Help';
 // ! Отключить перед модерацией
 const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === 'production') {
-  //if (process.env.NODE_ENV === 'development') {
+    //if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -231,7 +231,7 @@ function App() {
   // }, [status]);
 
   // Логирование матрицы исходного игрового поля
-  // // ! Отключить перед модерацией
+  // ! Отключить перед модерацией
   // useEffect(() => {
   //   if (status === 'started') {
   //     console.log('fieldMatrix:', fieldMatrixRef.current);
@@ -474,11 +474,14 @@ function App() {
           openedCellsMatrixRef.current[y][x] === 0 ||
           (autoOpen && openedCellsMatrixRef.current[y][x] === -1)
         ) {
+          if (autoOpen && openedCellsMatrixRef.current[y][x] === -1) {
+            setFlagsCount(flagsCountRef.current + 1);
+          } else --fieldNoOpenRef.current;
+
           let lostFlag = false;
           const tempOpenedCellsMatrix = openedCellsMatrixRef.current;
           tempOpenedCellsMatrix[y][x] = 1;
           setOpenedCellsMatrix([...tempOpenedCellsMatrix]);
-          --fieldNoOpenRef.current;
           if (fieldMatrixRef.current[y][x] === -1) {
             setStatusLoseGame();
             lostFlag = true;
