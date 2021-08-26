@@ -20,8 +20,8 @@ import Help from '../Panel/Controllers/Help/Help';
 // Инициализация Сбер ассистента
 // ! Отключить перед модерацией
 const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === 'production') {
-    //if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? '',
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
@@ -36,15 +36,15 @@ const calculateFieldData = (difficulty) => {
   switch (difficulty) {
     case 'amateur':
       return {
-        x: 15,
-        y: 15,
-        minesCount: 40,
+        x: 11,
+        y: 11,
+        minesCount: 20,
       };
     case 'profi':
       return {
-        x: 20,
-        y: 20,
-        minesCount: 70,
+        x: 15,
+        y: 15,
+        minesCount: 40,
       };
     default:
       return {
