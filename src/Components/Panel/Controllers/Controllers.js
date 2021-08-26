@@ -83,7 +83,7 @@ const Controllers = ({
                     action_id: 'saStatusForDiff',
                     parameters: {
                       status: `${status}`,
-                      diff: `профессионал`,
+                      diff: `мастер`,
                     },
                   },
                 });
