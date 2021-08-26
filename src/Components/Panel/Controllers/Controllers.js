@@ -70,7 +70,7 @@ const Controllers = ({
             <Radiobox
               className="radio-margin-left"
               name="Difficulty"
-              label="Профессионал"
+              label="Мастер"
               value="profi"
               disabled={
                 status !== 'not_started' && status !== 'new' ? true : false
